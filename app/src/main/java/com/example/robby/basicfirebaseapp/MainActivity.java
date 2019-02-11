@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
     private List<AuthUI.IdpConfig> providers;
     private static final int RC_SIGN_IN = 69;
+    private static final int RC_EDIT = 70;
+
+
     private FirebaseUser authUser;
     private String authUid;
 
@@ -125,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
                 // sign in failed
                 // TODO handle failed sign in
             }
+        } else if(requestCode == RC_EDIT){
+            // update UI
+            nameTextView.setText(authUser.getDisplayName());
+            emailTextView.setText(authUser.getEmail());
         }
     }
 
@@ -142,6 +149,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.sign_out:
                 signOut();
                 return true;
+            case R.id.edit_profile:
+                // launch edit activity
+                Intent intent = new Intent(MainActivity.this, EditActivity.class);
+                startActivityForResult(intent,
+                        RC_EDIT);
+
             default:
                 return super.onOptionsItemSelected(item);
         }
