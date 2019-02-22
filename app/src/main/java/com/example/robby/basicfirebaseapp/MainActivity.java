@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private List<AuthUI.IdpConfig> providers;
     private static final int RC_SIGN_IN = 69;
     private static final int RC_EDIT = 70;
+    private static final int RC_POST = 71;
 
 
     private FirebaseUser authUser;
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CreatePostActivity.class);
+                startActivityForResult(intent, RC_POST);
             }
         });
     }
@@ -141,6 +143,10 @@ public class MainActivity extends AppCompatActivity {
             // update UI
             nameTextView.setText(authUser.getDisplayName());
             emailTextView.setText(authUser.getEmail());
+        } else if(requestCode == RC_POST){
+            if(resultCode == RESULT_OK){
+                // TODO refresh posts
+            }
         }
     }
 
