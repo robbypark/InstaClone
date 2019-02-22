@@ -33,7 +33,7 @@ public class FindActivity extends AppCompatActivity {
 
         entryList = new ArrayList<>();
 
-        adapter = new EntryAdapter(FindActivity.this, R.layout.map_list_item, entryList);
+        adapter = new EntryAdapter(FindActivity.this, R.layout.map_list_item, entryList, "username");
         listView = findViewById(R.id.find_list);
         listView.setAdapter(adapter);
 

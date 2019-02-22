@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -17,33 +20,41 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private static String TAG = "MainActivity";
 
-    private DatabaseReference mDatabase;
     private Button btnFind;
     private Button btnFollowers;
     private Button btnFollowing;
     private Button btnPost;
     private TextView nameTextView;
     private TextView emailTextView;
+    private ListView postListView;
+    private EntryAdapter adapter;
 
     private List<AuthUI.IdpConfig> providers;
+    private DatabaseReference mDatabase;
+    private FirebaseUser authUser;
+    private String authUid;
+    private ArrayList<Map.Entry> postList;
+
     private static final int RC_SIGN_IN = 69;
     private static final int RC_EDIT = 70;
     private static final int RC_POST = 71;
 
-
-    private FirebaseUser authUser;
-    private String authUid;
 
 
     @Override
@@ -57,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         btnPost = findViewById(R.id.btnPost);
         nameTextView = findViewById(R.id.nameTextView);
         emailTextView = findViewById(R.id.emailTextView);
+        postListView = findViewById(R.id.mainPostListView);
 
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         if(authUser != null){
@@ -116,6 +128,28 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, RC_POST);
             }
         });
+
+        postList = new ArrayList<>();
+        adapter = new EntryAdapter(MainActivity.this, R.layout.map_list_item, postList, "title");
+        postListView.setAdapter(adapter);
+
+        // get posts
+        mDatabase.child("posts").child(authUid).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        collectPosts((Map<String, Object>) dataSnapshot.getValue());
+                        adapter.notifyDataSetChanged();
+                        Log.d(TAG, "onDataChange: posts");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // handle error
+                    }
+                }
+        );
+
     }
 
     @Override
@@ -140,14 +174,26 @@ public class MainActivity extends AppCompatActivity {
                 // TODO handle failed sign in
             }
         } else if(requestCode == RC_EDIT){
-            // update UI
-            nameTextView.setText(authUser.getDisplayName());
-            emailTextView.setText(authUser.getEmail());
+            updateUI();
+
         } else if(requestCode == RC_POST){
             if(resultCode == RESULT_OK){
-                // TODO refresh posts
+                Log.d(TAG, "onActivityResult: rc_post");
             }
         }
+    }
+
+    private void collectPosts(Map<String,Object> posts) {
+        // TODO: posts out of order?
+        postList.clear();
+        for (Map.Entry<String, Object> item : posts.entrySet()){
+            postList.add(item);
+        }
+    }
+
+    private void updateUI(){
+        nameTextView.setText(authUser.getDisplayName());
+        emailTextView.setText(authUser.getEmail());
     }
 
 
@@ -167,8 +213,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.edit_profile:
                 // launch edit activity
                 Intent intent = new Intent(MainActivity.this, EditActivity.class);
-                startActivityForResult(intent,
-                        RC_EDIT);
+                startActivityForResult(intent, RC_EDIT);
 
             default:
                 return super.onOptionsItemSelected(item);
