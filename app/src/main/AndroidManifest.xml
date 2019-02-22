@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditActivity"></activity>
+        <activity android:name=".CreatePostActivity"></activity>
+        <activity android:name=".EditActivity" />
         <activity android:name=".FollowingActivity" />
         <activity android:name=".FollowerActivity" />
         <activity android:name=".UserActivity" />

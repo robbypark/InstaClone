@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnFind;
     private Button btnFollowers;
     private Button btnFollowing;
+    private Button btnPost;
     private TextView nameTextView;
     private TextView emailTextView;
 
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         btnFind = findViewById(R.id.btnFind);
         btnFollowers = findViewById(R.id.btnFollowers);
         btnFollowing = findViewById(R.id.btnFollowing);
+        btnPost = findViewById(R.id.btnPost);
         nameTextView = findViewById(R.id.nameTextView);
         emailTextView = findViewById(R.id.emailTextView);
 
@@ -103,6 +105,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FindActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        btnPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CreatePostActivity.class);
             }
         });
     }
