@@ -1,10 +1,12 @@
 package com.example.robby.basicfirebaseapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ public class UserActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private FirebaseUser authUser;
     private String authUid;
+    private String uid;
 
     private EntryAdapter adapter;
     private ArrayList<Map.Entry> postList;
@@ -47,9 +50,17 @@ public class UserActivity extends AppCompatActivity {
         btnUnFollow = findViewById(R.id.btnUnfollow);
         postListView = findViewById(R.id.userPostListView);
 
-        // get user info to display
-        final String uid = getIntent().getStringExtra("UID");
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        // get authUser
+        authUser = FirebaseAuth.getInstance().getCurrentUser();
+        authUid = authUser.getUid();
+        // get user info to display
+        uid = getIntent().getStringExtra("UID");
+        // get posts
+        postList = new ArrayList<>();
+        adapter = new EntryAdapter(UserActivity.this, R.layout.map_list_item, postList, "title");
+        postListView.setAdapter(adapter);
+
         mDatabase.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -63,10 +74,6 @@ public class UserActivity extends AppCompatActivity {
 
             }
         });
-
-        // get authUser
-        authUser = FirebaseAuth.getInstance().getCurrentUser();
-        authUid = authUser.getUid();
 
         btnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,10 +94,6 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        // get posts
-        postList = new ArrayList<>();
-        adapter = new EntryAdapter(UserActivity.this, R.layout.map_list_item, postList, "title");
-        postListView.setAdapter(adapter);
         mDatabase.child("posts").child(uid).addValueEventListener(
                 new ValueEventListener() {
                     @Override
@@ -105,6 +108,20 @@ public class UserActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        // post click
+        postListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map.Entry<String, Object> item = (Map.Entry) postListView.getItemAtPosition(position);
+                String pid = item.getKey();
+                // start new PostActivity and pass pid with Intent
+                Intent intent = new Intent(UserActivity.this, PostActivity.class);
+                intent.putExtra("PID", pid);
+                intent.putExtra("UID", uid);
+                startActivity(intent);
+            }
+        });
     }
 
     private void collectPosts(Map<String,Object> posts) {
