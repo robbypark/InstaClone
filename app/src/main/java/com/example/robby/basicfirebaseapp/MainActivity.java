@@ -70,6 +70,13 @@ public class MainActivity extends AppCompatActivity {
         emailTextView = findViewById(R.id.emailTextView);
         postListView = findViewById(R.id.mainPostListView);
 
+        // retrieves an instance of FirebaseDatabase and references the location to write to
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        
+        postList = new ArrayList<>();
+        adapter = new EntryAdapter(MainActivity.this, R.layout.map_list_item, postList, "title");
+        postListView.setAdapter(adapter);
+
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         if(authUser != null){
             // authUser signed in
@@ -77,6 +84,22 @@ public class MainActivity extends AppCompatActivity {
             // set up UI elements
             nameTextView.setText(authUser.getDisplayName());
             emailTextView.setText(authUser.getEmail());
+            // get posts
+            mDatabase.child("posts").child(authUid).addValueEventListener(
+                    new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            collectPosts((Map<String, Object>) dataSnapshot.getValue());
+                            adapter.notifyDataSetChanged();
+                            Log.d(TAG, "onDataChange: posts");
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            // handle error
+                        }
+                    }
+            );
         } else {
             // set up firebase auth
             providers = Arrays.asList(
@@ -90,9 +113,6 @@ public class MainActivity extends AppCompatActivity {
                             .build(),
                     RC_SIGN_IN);
         }
-
-        // retrieves an instance of FirebaseDatabase and references the location to write to
-        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // followers
         btnFollowers.setOnClickListener(new View.OnClickListener() {
@@ -128,28 +148,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, RC_POST);
             }
         });
-
-        postList = new ArrayList<>();
-        adapter = new EntryAdapter(MainActivity.this, R.layout.map_list_item, postList, "title");
-        postListView.setAdapter(adapter);
-
-        // get posts
-        mDatabase.child("posts").child(authUid).addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        collectPosts((Map<String, Object>) dataSnapshot.getValue());
-                        adapter.notifyDataSetChanged();
-                        Log.d(TAG, "onDataChange: posts");
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // handle error
-                    }
-                }
-        );
-
     }
 
     @Override

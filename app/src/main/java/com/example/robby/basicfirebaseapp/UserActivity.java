@@ -3,8 +3,10 @@ package com.example.robby.basicfirebaseapp;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -15,16 +17,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 public class UserActivity extends AppCompatActivity {
 
     private TextView nameTextView;
     private TextView emailTextView;
     private Button btnFollow;
     private Button btnUnFollow;
+    private ListView postListView;
 
     private DatabaseReference mDatabase;
     private FirebaseUser authUser;
     private String authUid;
+
+    private EntryAdapter adapter;
+    private ArrayList<Map.Entry> postList;
 
 
     @Override
@@ -36,6 +45,7 @@ public class UserActivity extends AppCompatActivity {
         emailTextView = findViewById(R.id.emailTextView);
         btnFollow = findViewById(R.id.btnFollow);  //TODO check if already following
         btnUnFollow = findViewById(R.id.btnUnfollow);
+        postListView = findViewById(R.id.userPostListView);
 
         // get user info to display
         final String uid = getIntent().getStringExtra("UID");
@@ -76,5 +86,36 @@ public class UserActivity extends AppCompatActivity {
                 mDatabase.child("followers").child(uid).child(authUid).removeValue();
             }
         });
+
+        // get posts
+        postList = new ArrayList<>();
+        adapter = new EntryAdapter(UserActivity.this, R.layout.map_list_item, postList, "title");
+        postListView.setAdapter(adapter);
+        mDatabase.child("posts").child(uid).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        collectPosts((Map<String, Object>) dataSnapshot.getValue());
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // handle error
+                    }
+                }
+        );
     }
+
+    private void collectPosts(Map<String,Object> posts) {
+        // TODO: posts out of order?
+        if(posts != null){
+            postList.clear();
+            for (Map.Entry<String, Object> item : posts.entrySet()){
+                postList.add(item);
+            }
+        }
+    }
+
+
 }
