@@ -246,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
                 // start new PostActivity and pass pid with Intent
                 Intent intent = new Intent(MainActivity.this, PostActivity.class);
                 intent.putExtra("PID", pid);
+                intent.putExtra("UID", authUid);
                 startActivity(intent);
             }
         });
