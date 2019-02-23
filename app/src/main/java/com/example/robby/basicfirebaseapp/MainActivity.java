@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         // retrieves an instance of FirebaseDatabase and references the location to write to
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        
+
         postList = new ArrayList<>();
         adapter = new EntryAdapter(MainActivity.this, R.layout.map_list_item, postList, "title");
         postListView.setAdapter(adapter);
@@ -183,9 +183,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void collectPosts(Map<String,Object> posts) {
         // TODO: posts out of order?
-        postList.clear();
-        for (Map.Entry<String, Object> item : posts.entrySet()){
-            postList.add(item);
+        if(posts != null) {
+            postList.clear();
+            for (Map.Entry<String, Object> item : posts.entrySet()) {
+                postList.add(item);
+            }
         }
     }
 
