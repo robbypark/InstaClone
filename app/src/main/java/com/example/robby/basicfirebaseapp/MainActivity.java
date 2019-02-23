@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -82,24 +83,9 @@ public class MainActivity extends AppCompatActivity {
             // authUser signed in
             authUid = authUser.getUid();
             // set up UI elements
-            nameTextView.setText(authUser.getDisplayName());
-            emailTextView.setText(authUser.getEmail());
-            // get posts
-            mDatabase.child("posts").child(authUid).addValueEventListener(
-                    new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            collectPosts((Map<String, Object>) dataSnapshot.getValue());
-                            adapter.notifyDataSetChanged();
-                            Log.d(TAG, "onDataChange: posts");
-                        }
+            updateUI();
+            attachPostListeners();
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            // handle error
-                        }
-                    }
-            );
         } else {
             // set up firebase auth
             providers = Arrays.asList(
@@ -161,12 +147,14 @@ public class MainActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK){
                 // sign in succeeded
                 authUser = FirebaseAuth.getInstance().getCurrentUser();
+                authUid = authUser.getUid();
                 // add user to database
                 User user = new User(authUser.getDisplayName(), authUser.getEmail());
                 mDatabase.child("users").child(authUser.getUid()).setValue(user);
                 // update UI elements
-                nameTextView.setText(authUser.getDisplayName());
-                emailTextView.setText(authUser.getEmail());
+                updateUI();
+                attachPostListeners();
+
             } else {
                 // sign in failed
                 // TODO handle failed sign in
@@ -231,7 +219,36 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    private void attachPostListeners(){
+        // get posts
+        mDatabase.child("posts").child(authUid).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        collectPosts((Map<String, Object>) dataSnapshot.getValue());
+                        adapter.notifyDataSetChanged();
+                        Log.d(TAG, "onDataChange: posts");
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // handle error
+                    }
+                }
+        );
 
+        // post click
+        postListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map.Entry<String, Object> item = (Map.Entry) postListView.getItemAtPosition(position);
+                String pid = item.getKey();
+                // start new PostActivity and pass pid with Intent
+                Intent intent = new Intent(MainActivity.this, PostActivity.class);
+                intent.putExtra("PID", pid);
+                startActivity(intent);
+            }
+        });
+    }
 
 }
