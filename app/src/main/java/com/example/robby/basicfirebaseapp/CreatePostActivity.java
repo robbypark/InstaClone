@@ -74,11 +74,15 @@ public class CreatePostActivity extends AppCompatActivity {
 
     // create post and upload it to Firebase
     private void createPost() {
+        // create a post
         String title = editTextPost.getText().toString();
         long time = System.currentTimeMillis();
-        Post post = new Post(title, time);
+        // convert from Bitmap to Base64
+        String base64Image = ImageUtils.encodeToBase64(selectedImage, Bitmap.CompressFormat.JPEG, 100);
 
-        // create post for current user
+        Post post = new Post(title, time, base64Image);
+
+        // add post for current user
         String postId = mDatabase.child("posts").child(authUid).push().getKey();
         mDatabase.child("posts").child(authUid).child(postId).setValue(post);
     }

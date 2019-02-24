@@ -1,8 +1,10 @@
 package com.example.robby.basicfirebaseapp;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -14,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 public class PostActivity extends AppCompatActivity {
 
     private TextView titleTextView;
+    private ImageView imageView;
 
     private String uid;
     private String pid;
@@ -26,6 +29,7 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         titleTextView = findViewById(R.id.titleTextView);
+        imageView = findViewById(R.id.postImageView);
 
         uid = getIntent().getStringExtra("UID");
         pid = getIntent().getStringExtra("PID");
@@ -35,7 +39,9 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Post post = dataSnapshot.getValue(Post.class);
-                titleTextView.setText(post.title);
+                titleTextView.setText(post.getTitle());
+                Bitmap bitmap = ImageUtils.decodeBase64(post.getImage());
+                imageView.setImageBitmap(bitmap);
             }
 
             @Override
