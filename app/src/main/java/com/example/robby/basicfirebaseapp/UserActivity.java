@@ -56,7 +56,7 @@ public class UserActivity extends AppCompatActivity {
         authUid = authUser.getUid();
         // get user info to display
         uid = getIntent().getStringExtra("UID");
-        // get posts
+        // get postList
         postList = new ArrayList<>();
         adapter = new EntryAdapter(UserActivity.this, R.layout.map_list_item, postList, "title");
         postListView.setAdapter(adapter);
@@ -125,7 +125,7 @@ public class UserActivity extends AppCompatActivity {
     }
 
     private void collectPosts(Map<String,Object> posts) {
-        // TODO: posts out of order?
+        // TODO: postList out of order?
         if(posts != null){
             postList.clear();
             for (Map.Entry<String, Object> item : posts.entrySet()){

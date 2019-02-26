@@ -76,10 +76,12 @@ public class PostActivity extends AppCompatActivity {
         mDatabase.child("posts").child(uid).child(pid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Post post = dataSnapshot.getValue(Post.class);
-                titleTextView.setText(post.getTitle());
-                Bitmap bitmap = ImageUtils.decodeBase64(post.getImage());
-                imageView.setImageBitmap(bitmap);
+                if(dataSnapshot != null){
+                    Post post = dataSnapshot.getValue(Post.class);
+                    titleTextView.setText(post.getTitle());
+                    Bitmap bitmap = ImageUtils.decodeBase64(post.getImage());
+                    imageView.setImageBitmap(bitmap);
+                }
             }
 
             @Override
