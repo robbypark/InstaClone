@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView nameTextView;
     private TextView emailTextView;
-    private ListView postListView;
-    private EntryAdapter adapter;
+    //private ListView postListView;
+    private GridView gridView;
+    private PostAdapter adapter;
 
     private List<AuthUI.IdpConfig> providers;
     private DatabaseReference mDatabase;
@@ -70,15 +72,18 @@ public class MainActivity extends AppCompatActivity {
         postButton = findViewById(R.id.btnPost);
         nameTextView = findViewById(R.id.nameTextView);
         emailTextView = findViewById(R.id.emailTextView);
-        postListView = findViewById(R.id.mainPostListView);
+        //postListView = findViewById(R.id.mainPostListView);
         newsFeedButton = findViewById(R.id.newsFeedButton);
+        gridView = findViewById(R.id.postGridView);
 
         // retrieves an instance of FirebaseDatabase and references the location to write to
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         postList = new ArrayList<>();
-        adapter = new EntryAdapter(MainActivity.this, R.layout.map_list_item, postList, "title");
-        postListView.setAdapter(adapter);
+        adapter = new PostAdapter(MainActivity.this, R.layout.post_list_item, postList);
+        //postListView.setAdapter(adapter);
+        gridView.setNumColumns(3);
+        gridView.setAdapter(adapter);
 
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         if(authUser != null){
@@ -248,10 +253,10 @@ public class MainActivity extends AppCompatActivity {
         );
 
         // post click
-        postListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map.Entry<String, Object> item = (Map.Entry) postListView.getItemAtPosition(position);
+                Map.Entry<String, Object> item = (Map.Entry) gridView.getItemAtPosition(position);
                 String pid = item.getKey();
                 // start new PostActivity and pass pid with Intent
                 Intent intent = new Intent(MainActivity.this, PostActivity.class);

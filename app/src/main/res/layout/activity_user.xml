@@ -63,8 +63,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
-        android:id="@+id/userPostListView"
+    <GridView
+        android:id="@+id/userPostGridView"
         android:layout_width="395dp"
         android:layout_height="413dp"
         android:layout_marginStart="8dp"
@@ -77,4 +77,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+
 </android.support.constraint.ConstraintLayout>

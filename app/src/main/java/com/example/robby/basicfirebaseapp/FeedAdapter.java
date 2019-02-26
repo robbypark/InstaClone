@@ -14,15 +14,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
-public class PostAdapter extends ArrayAdapter<Map.Entry> {
+public class FeedAdapter extends ArrayAdapter<Map.Entry> {
 
     private ViewHolder viewHolder;
 
     private static class ViewHolder {
+        private TextView titleTextView;
         private ImageView imageView;
+        private TextView dateTextView;
     }
 
-    public PostAdapter(Context context, int textViewResourceId, ArrayList<Map.Entry> items) {
+    public FeedAdapter(Context context, int textViewResourceId, ArrayList<Map.Entry> items) {
         super(context, textViewResourceId, items);
     }
 
@@ -30,10 +32,12 @@ public class PostAdapter extends ArrayAdapter<Map.Entry> {
 
         if (convertView == null) {
             convertView = LayoutInflater.from(this.getContext())
-                    .inflate(R.layout.post_list_item, parent, false);
+                    .inflate(R.layout.newsfeed_view, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.postListImageView);
+            viewHolder.titleTextView = (TextView) convertView.findViewById(R.id.feedTitleTextView);
+            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.feedImageView);
+            viewHolder.dateTextView = (TextView) convertView.findViewById(R.id.feedDateTextView);
 
 
             convertView.setTag(viewHolder);
@@ -45,8 +49,15 @@ public class PostAdapter extends ArrayAdapter<Map.Entry> {
         if (item!= null) {
             Map singlePost = (Map) item.getValue();
 
+            viewHolder.titleTextView.setText(singlePost.get("title").toString());
+
             Bitmap bitmap = ImageUtils.decodeBase64(singlePost.get("image").toString());
             viewHolder.imageView.setImageBitmap(bitmap);
+
+            long yourmilliseconds = (long) singlePost.get("time");
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd HH:mm");
+            Date resultdate = new Date(yourmilliseconds);
+            viewHolder.dateTextView.setText(sdf.format(resultdate));
         }
 
         return convertView;

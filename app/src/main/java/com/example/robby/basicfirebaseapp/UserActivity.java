@@ -4,11 +4,10 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,14 +27,14 @@ public class UserActivity extends AppCompatActivity {
     private TextView emailTextView;
     private Button btnFollow;
     private Button btnUnFollow;
-    private ListView postListView;
+    private GridView gridView;
 
     private DatabaseReference mDatabase;
     private FirebaseUser authUser;
     private String authUid;
     private String uid;
 
-    private EntryAdapter adapter;
+    private PostAdapter adapter;
     private ArrayList<Map.Entry> postList;
 
 
@@ -48,7 +47,7 @@ public class UserActivity extends AppCompatActivity {
         emailTextView = findViewById(R.id.emailTextView);
         btnFollow = findViewById(R.id.btnFollow);  //TODO check if already following
         btnUnFollow = findViewById(R.id.btnUnfollow);
-        postListView = findViewById(R.id.userPostListView);
+        gridView = findViewById(R.id.userPostGridView);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // get authUser
@@ -56,10 +55,12 @@ public class UserActivity extends AppCompatActivity {
         authUid = authUser.getUid();
         // get user info to display
         uid = getIntent().getStringExtra("UID");
+
         // get postList
         postList = new ArrayList<>();
-        adapter = new EntryAdapter(UserActivity.this, R.layout.map_list_item, postList, "title");
-        postListView.setAdapter(adapter);
+        adapter = new PostAdapter(UserActivity.this, R.layout.post_list_item, postList);
+        gridView.setNumColumns(3);
+        gridView.setAdapter(adapter);
 
         mDatabase.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -110,10 +111,10 @@ public class UserActivity extends AppCompatActivity {
         );
 
         // post click
-        postListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Map.Entry<String, Object> item = (Map.Entry) postListView.getItemAtPosition(position);
+                Map.Entry<String, Object> item = (Map.Entry) gridView.getItemAtPosition(position);
                 String pid = item.getKey();
                 // start new PostActivity and pass pid with Intent
                 Intent intent = new Intent(UserActivity.this, PostActivity.class);

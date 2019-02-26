@@ -40,7 +40,7 @@ public class FindActivity extends AppCompatActivity {
         entryList = new ArrayList<>();
         allTempData = new ArrayList<>();
 
-        adapter = new EntryAdapter(FindActivity.this, R.layout.map_list_item, entryList, "username");
+        adapter = new EntryAdapter(FindActivity.this, R.layout.map_list_item, entryList);
         listView = findViewById(R.id.find_list);
         editText = findViewById(R.id.key);
         listView.setAdapter(adapter);
