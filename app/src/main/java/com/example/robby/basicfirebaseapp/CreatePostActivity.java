@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,10 +23,13 @@ import java.io.InputStream;
 
 public class CreatePostActivity extends AppCompatActivity {
 
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+
     private ImageView imageView;
     private Button btnUploadImage;
     private EditText editTextPost;
     private Button btnSubmit;
+    private Button btnCamera;
 
     private FirebaseUser authUser;
     private String authUid;
@@ -44,6 +48,7 @@ public class CreatePostActivity extends AppCompatActivity {
         btnSubmit = findViewById(R.id.btnSubmit);
         imageView = findViewById(R.id.createPostImageView);
         btnUploadImage = findViewById(R.id.btnUploadImage);
+        btnCamera = findViewById(R.id.cameraButton);
 
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         authUid = authUser.getUid();
@@ -55,6 +60,16 @@ public class CreatePostActivity extends AppCompatActivity {
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
                 photoPickerIntent.setType("image/*");
                 startActivityForResult(photoPickerIntent, RC_LOAD_IMG);
+            }
+        });
+
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
             }
         });
 
@@ -104,6 +119,13 @@ public class CreatePostActivity extends AppCompatActivity {
         }else {
             Toast.makeText(CreatePostActivity.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
         }
+
+        if (reqCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            selectedImage = (Bitmap) extras.get("data");
+            imageView.setImageBitmap(selectedImage);
+        }
+
     }
 
 }
