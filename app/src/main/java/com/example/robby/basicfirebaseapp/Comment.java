@@ -5,6 +5,10 @@ public class Comment {
     private long time;
     private String comment;
 
+    // for Firebase
+    public Comment() {
+    }
+
     public Comment(String uid, String comment) {
         this.uid = uid;
         this.comment = comment;

@@ -4,10 +4,13 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 public class PostActivity extends AppCompatActivity {
 
     private TextView titleTextView;
@@ -27,6 +33,8 @@ public class PostActivity extends AppCompatActivity {
     private TextView likeCountTextView;
     private Button postCommentButton;
     private EditText editText;
+    private ListView commentListView;
+    private ArrayAdapter<String> adapter;
 
     private FirebaseUser authUser;
     private String authUid;
@@ -34,6 +42,8 @@ public class PostActivity extends AppCompatActivity {
     private String uid;
     private String pid;
     private DatabaseReference mDatabase;
+
+    private ArrayList<String> commentList;
 
 
     @Override
@@ -47,6 +57,13 @@ public class PostActivity extends AppCompatActivity {
         likeCountTextView = findViewById(R.id.likeCountTextView);
         postCommentButton = findViewById(R.id.postCommentButton);
         editText = findViewById(R.id.commentEditText);
+        commentListView = findViewById(R.id.commentListView);
+
+        commentList = new ArrayList<>();
+        adapter =
+                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, commentList);
+        commentListView.setAdapter(adapter);
+
 
         uid = getIntent().getStringExtra("UID");
         pid = getIntent().getStringExtra("PID");
@@ -95,6 +112,15 @@ public class PostActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Toast.makeText(PostActivity.this, "comment received", Toast.LENGTH_SHORT).show();
+                if(dataSnapshot.getValue() != null){
+//                    collectComments((Map<String,Object>) dataSnapshot.getValue());
+                    commentList.clear();
+                    for(DataSnapshot child : dataSnapshot.getChildren()){
+                        Comment comment = child.getValue(Comment.class);
+                        commentList.add(comment.getComment());
+                    }
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -129,4 +155,5 @@ public class PostActivity extends AppCompatActivity {
             }
         });
     }
+
 }
