@@ -4,19 +4,30 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 public class PostActivity extends AppCompatActivity {
 
     private TextView titleTextView;
     private ImageView imageView;
+    private Button likeButton;
+    private TextView likeCountTextView;
+
+    private FirebaseUser authUser;
+    private String authUid;
 
     private String uid;
     private String pid;
@@ -30,9 +41,14 @@ public class PostActivity extends AppCompatActivity {
 
         titleTextView = findViewById(R.id.titleTextView);
         imageView = findViewById(R.id.postImageView);
+        likeButton = findViewById(R.id.likeButton);
+        likeCountTextView = findViewById(R.id.likeCountTextView);
 
         uid = getIntent().getStringExtra("UID");
         pid = getIntent().getStringExtra("PID");
+
+        authUser = FirebaseAuth.getInstance().getCurrentUser();
+        authUid = authUser.getUid();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("posts").child(uid).child(pid).addValueEventListener(new ValueEventListener() {
@@ -50,5 +66,36 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
+        mDatabase.child("likes").child(pid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(authUid)){
+                    likeButton.setText("unlike");
+                } else {
+                    likeButton.setText("like");
+                }
+                // get like count
+                likeCountTextView.setText("Likes: " + dataSnapshot.getChildrenCount());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // like post
+        likeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(likeButton.getText().equals("like")){
+                    // like post
+                    mDatabase.child("likes").child(pid).child(authUid).setValue(true);
+                } else if (likeButton.getText().equals("unlike")){
+                    // unlike post
+                    mDatabase.child("likes").child(pid).child(authUid).removeValue();
+                }
+            }
+        });
     }
 }
