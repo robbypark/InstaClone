@@ -6,8 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -17,14 +19,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 public class PostActivity extends AppCompatActivity {
 
     private TextView titleTextView;
     private ImageView imageView;
     private Button likeButton;
     private TextView likeCountTextView;
+    private Button postCommentButton;
+    private EditText editText;
 
     private FirebaseUser authUser;
     private String authUid;
@@ -43,6 +45,8 @@ public class PostActivity extends AppCompatActivity {
         imageView = findViewById(R.id.postImageView);
         likeButton = findViewById(R.id.likeButton);
         likeCountTextView = findViewById(R.id.likeCountTextView);
+        postCommentButton = findViewById(R.id.postCommentButton);
+        editText = findViewById(R.id.commentEditText);
 
         uid = getIntent().getStringExtra("UID");
         pid = getIntent().getStringExtra("PID");
@@ -51,6 +55,7 @@ public class PostActivity extends AppCompatActivity {
         authUid = authUser.getUid();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
         mDatabase.child("posts").child(uid).child(pid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -66,6 +71,7 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
+        // post like db listener
         mDatabase.child("likes").child(pid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -84,7 +90,32 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-        // like post
+        // post comment db listener
+        mDatabase.child("comments").child(pid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Toast.makeText(PostActivity.this, "comment received", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // post comment button
+        postCommentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String cmt = editText.getText().toString();
+                String cid = mDatabase.child("comments").child(pid).push().getKey();
+                Comment comment = new Comment(authUid, cmt);
+                mDatabase.child("comments").child(pid).child(cid).setValue(comment);
+                // TODO: clear edit text
+            }
+        });
+
+        // like post button
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
