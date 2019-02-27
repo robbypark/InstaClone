@@ -26,7 +26,6 @@ public class UserActivity extends AppCompatActivity {
     private TextView nameTextView;
     private TextView emailTextView;
     private Button btnFollow;
-    private Button btnUnFollow;
     private GridView gridView;
 
     private DatabaseReference mDatabase;
@@ -46,7 +45,6 @@ public class UserActivity extends AppCompatActivity {
         nameTextView = findViewById(R.id.nameTextView);
         emailTextView = findViewById(R.id.emailTextView);
         btnFollow = findViewById(R.id.btnFollow);  //TODO check if already following
-        btnUnFollow = findViewById(R.id.btnUnfollow);
         gridView = findViewById(R.id.userPostGridView);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -76,22 +74,36 @@ public class UserActivity extends AppCompatActivity {
             }
         });
 
-        btnFollow.setOnClickListener(new View.OnClickListener() {
+        mDatabase.child("followers").child(uid).child(authUid).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                //TODO check if already following
-                // add uid to authUid following
-                mDatabase.child("following").child(authUid).child(uid).setValue(true);
-                // add authUid to uid followers
-                mDatabase.child("followers").child(uid).child(authUid).setValue(true);
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null){
+                    // authUid is following
+                    btnFollow.setText("unfollow");
+                } else {
+                    // authUid is not following
+                    btnFollow.setText("follow");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
 
-        btnUnFollow.setOnClickListener(new View.OnClickListener() {
+        btnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDatabase.child("following").child(authUid).child(uid).removeValue();
-                mDatabase.child("followers").child(uid).child(authUid).removeValue();
+                if(btnFollow.getText().toString().equals("follow")){
+                    // follow
+                    mDatabase.child("following").child(authUid).child(uid).setValue(true);
+                    mDatabase.child("followers").child(uid).child(authUid).setValue(true);
+                } else if (btnFollow.getText().toString().equals("unfollow")){
+                    // unfollow
+                    mDatabase.child("following").child(authUid).child(uid).removeValue();
+                    mDatabase.child("followers").child(uid).child(authUid).removeValue();
+                }
             }
         });
 

@@ -41,24 +41,12 @@
 
     <Button
         android:id="@+id/btnFollow"
-        android:layout_width="89dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
         android:layout_marginBottom="8dp"
         android:text="@string/otherFollowers"
         app:layout_constraintBottom_toTopOf="@+id/userPostGridView"
-        app:layout_constraintStart_toEndOf="@+id/profile_image" />
-
-    <Button
-        android:id="@+id/btnUnfollow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:text="@string/otherUnFollow"
-        app:layout_constraintBaseline_toBaselineOf="@+id/btnFollow"
-        app:layout_constraintStart_toEndOf="@+id/btnFollow" />
+        app:layout_constraintStart_toStartOf="@+id/emailTextView" />
 
     <GridView
         android:id="@+id/userPostGridView"

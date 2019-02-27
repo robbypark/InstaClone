@@ -113,7 +113,6 @@ public class PostActivity extends AppCompatActivity {
         mDatabase.child("comments").child(pid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Toast.makeText(PostActivity.this, "comment received", Toast.LENGTH_SHORT).show();
                 if(dataSnapshot.getValue() != null){
 //                    collectComments((Map<String,Object>) dataSnapshot.getValue());
                     commentList.clear();
@@ -140,6 +139,7 @@ public class PostActivity extends AppCompatActivity {
                 Comment comment = new Comment(authUid, cmt);
                 mDatabase.child("comments").child(pid).child(cid).setValue(comment);
                 // TODO: clear edit text
+                editText.setText("");
             }
         });
 

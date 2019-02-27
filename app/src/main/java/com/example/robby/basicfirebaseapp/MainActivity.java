@@ -107,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     RC_SIGN_IN);
         }
 
+
         // followers
         followersButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -198,6 +199,31 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(){
         nameTextView.setText(authUser.getDisplayName());
         emailTextView.setText(authUser.getEmail());
+
+        mDatabase.child("followers").child(authUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followersButton.setText(dataSnapshot.getChildrenCount() + " followers");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mDatabase.child("following").child(authUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followingButton.setText(dataSnapshot.getChildrenCount() + " following");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
 
