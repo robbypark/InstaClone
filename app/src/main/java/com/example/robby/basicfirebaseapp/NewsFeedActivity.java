@@ -120,6 +120,7 @@ public class NewsFeedActivity extends AppCompatActivity {
 
                         }
                     }
+                    sortPosts();
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -134,11 +135,9 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private void collectPosts(Map<String,Object> posts){
         if(posts != null) {
-            postList.clear();
             for (Map.Entry<String, Object> item : posts.entrySet()) {
                 postList.add(item);
             }
-            sortPosts();
         }
     }
 
@@ -152,9 +151,9 @@ public class NewsFeedActivity extends AppCompatActivity {
                 long p2Time = (long) map2.get("time");
 
                 if(p1Time > p2Time){
-                    return 1;
-                } else {
                     return -1;
+                } else {
+                    return 1;
                 }
             }
         });
@@ -163,7 +162,6 @@ public class NewsFeedActivity extends AppCompatActivity {
 
     private void collectFollowing(Map<String,Object> users) {
         for (Map.Entry<String, Object> item : users.entrySet()){
-            followingUids.clear();
             //Get user map
             String uid = item.getKey();
             //followerList.add(uid);
