@@ -9,10 +9,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -36,14 +37,17 @@ public class MainActivity extends AppCompatActivity {
 
     private static String TAG = "MainActivity";
 
-    private Button btnFind;
-    private Button btnFollowers;
-    private Button btnFollowing;
-    private Button btnPost;
+    private Button findButton;
+    private Button followersButton;
+    private Button followingButton;
+    private Button postButton;
+    private Button newsFeedButton;
+
     private TextView nameTextView;
     private TextView emailTextView;
-    private ListView postListView;
-    private EntryAdapter adapter;
+    //private ListView postListView;
+    private GridView gridView;
+    private PostAdapter adapter;
 
     private List<AuthUI.IdpConfig> providers;
     private DatabaseReference mDatabase;
@@ -62,21 +66,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnFind = findViewById(R.id.btnFind);
-        btnFollowers = findViewById(R.id.btnFollowers);
-        btnFollowing = findViewById(R.id.btnFollowing);
-        btnPost = findViewById(R.id.btnPost);
+        findButton = findViewById(R.id.btnFind);
+        followersButton = findViewById(R.id.btnFollowers);
+        followingButton = findViewById(R.id.btnFollowing);
+        postButton = findViewById(R.id.btnPost);
         nameTextView = findViewById(R.id.nameTextView);
         emailTextView = findViewById(R.id.emailTextView);
-        postListView = findViewById(R.id.mainPostListView);
+        //postListView = findViewById(R.id.mainPostListView);
+        newsFeedButton = findViewById(R.id.newsFeedButton);
+        gridView = findViewById(R.id.postGridView);
+
+        // retrieves an instance of FirebaseDatabase and references the location to write to
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        postList = new ArrayList<>();
+        adapter = new PostAdapter(MainActivity.this, R.layout.post_list_item, postList);
+        //postListView.setAdapter(adapter);
+        gridView.setNumColumns(3);
+        gridView.setAdapter(adapter);
 
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         if(authUser != null){
             // authUser signed in
             authUid = authUser.getUid();
             // set up UI elements
-            nameTextView.setText(authUser.getDisplayName());
-            emailTextView.setText(authUser.getEmail());
+            updateUI();
+            attachPostListeners();
+
         } else {
             // set up firebase auth
             providers = Arrays.asList(
@@ -91,11 +107,8 @@ public class MainActivity extends AppCompatActivity {
                     RC_SIGN_IN);
         }
 
-        // retrieves an instance of FirebaseDatabase and references the location to write to
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
         // followers
-        btnFollowers.setOnClickListener(new View.OnClickListener() {
+        followersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FollowerActivity.class);
@@ -104,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // following
-        btnFollowing.setOnClickListener(new View.OnClickListener() {
+        followingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FollowingActivity.class);
@@ -113,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // find people
-        btnFind.setOnClickListener(new View.OnClickListener() {
+        findButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FindActivity.class);
@@ -121,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnPost.setOnClickListener(new View.OnClickListener() {
+        postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CreatePostActivity.class);
@@ -129,27 +142,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        postList = new ArrayList<>();
-        adapter = new EntryAdapter(MainActivity.this, R.layout.map_list_item, postList, "title");
-        postListView.setAdapter(adapter);
-
-        // get posts
-        mDatabase.child("posts").child(authUid).addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        collectPosts((Map<String, Object>) dataSnapshot.getValue());
-                        adapter.notifyDataSetChanged();
-                        Log.d(TAG, "onDataChange: posts");
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // handle error
-                    }
-                }
-        );
-
+        // newsfeed
+        newsFeedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, NewsFeedActivity.class);
+                startActivityForResult(intent, RC_POST);
+            }
+        });
     }
 
     @Override
@@ -163,12 +163,14 @@ public class MainActivity extends AppCompatActivity {
             if(resultCode == RESULT_OK){
                 // sign in succeeded
                 authUser = FirebaseAuth.getInstance().getCurrentUser();
+                authUid = authUser.getUid();
                 // add user to database
                 User user = new User(authUser.getDisplayName(), authUser.getEmail());
                 mDatabase.child("users").child(authUser.getUid()).setValue(user);
                 // update UI elements
-                nameTextView.setText(authUser.getDisplayName());
-                emailTextView.setText(authUser.getEmail());
+                updateUI();
+                attachPostListeners();
+
             } else {
                 // sign in failed
                 // TODO handle failed sign in
@@ -184,10 +186,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void collectPosts(Map<String,Object> posts) {
-        // TODO: posts out of order?
-        postList.clear();
-        for (Map.Entry<String, Object> item : posts.entrySet()){
-            postList.add(item);
+        // TODO: postList out of order?
+        if(posts != null) {
+            postList.clear();
+            for (Map.Entry<String, Object> item : posts.entrySet()) {
+                postList.add(item);
+            }
         }
     }
 
@@ -231,7 +235,36 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    private void attachPostListeners(){
+        // get posts
+        mDatabase.child("posts").child(authUid).addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        collectPosts((Map<String, Object>) dataSnapshot.getValue());
+                        adapter.notifyDataSetChanged();
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // handle error
+                    }
+                }
+        );
 
+        // post click
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map.Entry<String, Object> item = (Map.Entry) gridView.getItemAtPosition(position);
+                String pid = item.getKey();
+                // start new PostActivity and pass pid with Intent
+                Intent intent = new Intent(MainActivity.this, PostActivity.class);
+                intent.putExtra("PID", pid);
+                intent.putExtra("UID", authUid);
+                startActivity(intent);
+            }
+        });
+    }
 
 }
