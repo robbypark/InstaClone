@@ -34,7 +34,7 @@ public class PostActivity extends AppCompatActivity {
     private Button postCommentButton;
     private EditText editText;
     private ListView commentListView;
-    private ArrayAdapter<String> adapter;
+    private CommentAdapter adapter;
 
     private FirebaseUser authUser;
     private String authUid;
@@ -43,7 +43,7 @@ public class PostActivity extends AppCompatActivity {
     private String pid;
     private DatabaseReference mDatabase;
 
-    private ArrayList<String> commentList;
+    private ArrayList<Comment> commentList;
 
 
     @Override
@@ -61,7 +61,7 @@ public class PostActivity extends AppCompatActivity {
 
         commentList = new ArrayList<>();
         adapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, commentList);
+                new CommentAdapter(this, R.layout.comment_list_item, commentList);
         commentListView.setAdapter(adapter);
 
 
@@ -119,7 +119,7 @@ public class PostActivity extends AppCompatActivity {
                     commentList.clear();
                     for(DataSnapshot child : dataSnapshot.getChildren()){
                         Comment comment = child.getValue(Comment.class);
-                        commentList.add(comment.getComment());
+                        commentList.add(comment);
                     }
                     adapter.notifyDataSetChanged();
                 }
