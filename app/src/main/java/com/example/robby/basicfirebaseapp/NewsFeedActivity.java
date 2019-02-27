@@ -19,6 +19,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 public class NewsFeedActivity extends AppCompatActivity {
@@ -136,7 +138,27 @@ public class NewsFeedActivity extends AppCompatActivity {
             for (Map.Entry<String, Object> item : posts.entrySet()) {
                 postList.add(item);
             }
+            sortPosts();
         }
+    }
+
+    private void sortPosts(){
+        Collections.sort(postList, new Comparator<Map.Entry>() {
+            @Override
+            public int compare(Map.Entry p1, Map.Entry p2) {
+                Map map1 = (Map) p1.getValue();
+                long p1Time = (long) map1.get("time");
+                Map map2 = (Map) p2.getValue();
+                long p2Time = (long) map2.get("time");
+
+                if(p1Time > p2Time){
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
+
     }
 
     private void collectFollowing(Map<String,Object> users) {
