@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -53,6 +54,22 @@ public class NewsFeedActivity extends AppCompatActivity {
 
         adapter = new FeedAdapter(NewsFeedActivity.this, R.layout.newsfeed_view, postList);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                Map.Entry entry = (Map.Entry) listView.getItemAtPosition(position);
+                // open PostActivity
+                String pid = (String) entry.getKey();
+                Map singlePost = (Map) entry.getValue();
+                String uid = (String) singlePost.get("uid");
+                // start new PostActivity and pass pid with Intent
+                Intent intent = new Intent(NewsFeedActivity.this, PostActivity.class);
+                intent.putExtra("PID", pid);
+                intent.putExtra("UID", uid);
+                startActivity(intent);
+            }
+        });
+
 
         mDatabase.child("following/" + authUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
