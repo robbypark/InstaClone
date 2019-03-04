@@ -29,14 +29,10 @@ public class NewsFeedActivity extends AppCompatActivity {
     private String authUid;
     private DatabaseReference mDatabase;
 
-    //private ArrayList<Post> postList;
     private ArrayList<Map.Entry> postList;
     private ArrayList<String> followingUids;
 
-//    private RecyclerView recyclerView;
     private ListView listView;
-//    private RecyclerView.LayoutManager mLayoutManager;
-//    private PostAdapter mAdapter;
     private FeedAdapter adapter;
 
     private ValueEventListener postListener;
@@ -57,27 +53,6 @@ public class NewsFeedActivity extends AppCompatActivity {
 
         adapter = new FeedAdapter(NewsFeedActivity.this, R.layout.newsfeed_view, postList);
         listView.setAdapter(adapter);
-
-//        recyclerView = findViewById(R.id.newsFeedRecyclerView);
-//        mLayoutManager = new LinearLayoutManager(this);
-//        recyclerView.setLayoutManager(mLayoutManager);
-//        mAdapter = new PostAdapter(postList);
-//        recyclerView.setAdapter(mAdapter);
-
-//        // post click
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Map.Entry<String, Object> item = (Map.Entry) listView.getItemAtPosition(position);
-//                String pid = item.getKey();
-//                // start new PostActivity and pass pid with Intent
-//                Intent intent = new Intent(NewsFeedActivity.this, PostActivity.class);
-//                intent.putExtra("PID", pid);
-//                intent.putExtra("UID", item.getKey());
-//                startActivity(intent);
-//            }
-//        });
-
 
         mDatabase.child("following/" + authUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -109,13 +84,6 @@ public class NewsFeedActivity extends AppCompatActivity {
                     for(DataSnapshot childSnapshot : dataSnapshot.getChildren()){
                         // if childSnapshot is a follower
                         if(followingUids.contains(childSnapshot.getKey())){
-                            // get all of childSnapshots posts
-//                            for(DataSnapshot childChildSnapshot : childSnapshot.getChildren()){
-//                                Post post = childChildSnapshot.getValue(Post.class);
-//                                childSnapshot.getKey();
-//                                postList.add(post);
-//                            }
-                            //get all of childSnapshots posts
                             collectPosts((Map<String,Object>) childSnapshot.getValue());
 
                         }
