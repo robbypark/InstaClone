@@ -6,15 +6,17 @@ public class Post {
     private String title;
     private long time;
     private String image;
+    private String uid;
 
     // empty constructor for Firebase
     public Post() {
     }
 
-    public Post(String title, long time, String image) {
+    public Post(String title, long time, String image, String uid) {
         this.title = title;
         this.time = time;
         this.image = image;
+        this.uid = uid;
     }
 
     public String getTitle() {
@@ -39,5 +41,13 @@ public class Post {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }
