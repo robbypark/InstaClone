@@ -38,8 +38,6 @@ public class EntryAdapter extends ArrayAdapter<Map.Entry> {
 
         Map.Entry item = getItem(position);
         if (item!= null) {
-            // My layout has only one TextView
-            // do whatever you want with your string and long
             Map singleUser = (Map) item.getValue();
             viewHolder.nameTextView.setText((String) singleUser.get("username"));
         }

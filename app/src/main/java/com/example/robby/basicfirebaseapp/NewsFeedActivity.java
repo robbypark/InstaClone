@@ -67,6 +67,7 @@ public class NewsFeedActivity extends AppCompatActivity {
                 intent.putExtra("PID", pid);
                 intent.putExtra("UID", uid);
                 startActivity(intent);
+                finish();
             }
         });
 
