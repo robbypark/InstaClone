@@ -1,12 +1,13 @@
 package com.example.robby.basicfirebaseapp;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.robby.basicfirebaseapp.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -16,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class FollowerActivity extends AppCompatActivity {
@@ -24,8 +24,9 @@ public class FollowerActivity extends AppCompatActivity {
     private FirebaseUser authUser;
     private String authUid;
     private DatabaseReference mDatabase;
-    private List<String> followerList;
-    private ArrayAdapter adapter;
+    private ArrayList<String> uidList;
+    private ArrayList<Map.Entry> followerList;
+    private EntryAdapter adapter;
     private ListView listView;
 
     @Override
@@ -34,10 +35,25 @@ public class FollowerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_follower);
 
         listView = findViewById(R.id.follower_list);
-
+        uidList = new ArrayList<>();
         followerList = new ArrayList<>();
-        adapter = new ArrayAdapter<String>(FollowerActivity.this, R.layout.map_list_item, followerList);
+
+        adapter = new EntryAdapter(FollowerActivity.this, R.layout.map_list_item, followerList);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Map.Entry<String, Object> item = (Map.Entry) listView.getItemAtPosition(position);
+                String uid = item.getKey();
+                // start new UserActivity and pass uid with Intent
+                Intent intent = new Intent(FollowerActivity.this, UserActivity.class);
+                intent.putExtra("UID", uid);
+                startActivity(intent);
+                finish();
+            }
+        });
+
 
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         authUid = authUser.getUid();
@@ -47,6 +63,8 @@ public class FollowerActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null){
+                    uidList.clear();
+                    followerList.clear();
                     collectFollowers((Map<String, Object>) dataSnapshot.getValue());
                     adapter.notifyDataSetChanged();
                 }
@@ -61,19 +79,18 @@ public class FollowerActivity extends AppCompatActivity {
 
     private void collectFollowers(Map<String,Object> users) {
         for (Map.Entry<String, Object> item : users.entrySet()){
-            //Get user map
             String uid = item.getKey();
-            //followerList.add(uid);
-            addUserToList(uid);
+            uidList.add(uid);
         }
+        addUsersToList();
     }
 
-    private void addUserToList(String uid){
-        mDatabase.child("users").child(uid).addValueEventListener(new ValueEventListener() {
+    private void addUsersToList(){
+        mDatabase.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                followerList.add(user.getUsername());
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                collectUsers(map);
                 adapter.notifyDataSetChanged();
             }
 
@@ -82,6 +99,14 @@ public class FollowerActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void collectUsers(Map<String,Object> users) {
+        for (Map.Entry<String, Object> item : users.entrySet()){
+            if(uidList.contains(item.getKey())){
+                followerList.add(item);
+            }
+        }
     }
 
 
