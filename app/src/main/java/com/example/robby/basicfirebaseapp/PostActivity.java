@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.robby.basicfirebaseapp.model.Comment;
 import com.example.robby.basicfirebaseapp.model.Post;
+import com.example.robby.basicfirebaseapp.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +34,7 @@ public class PostActivity extends AppCompatActivity {
     private EditText editText;
     private ListView commentListView;
     private CommentAdapter adapter;
+    private TextView nameTextView;
 
     private FirebaseUser authUser;
     private String authUid;
@@ -56,6 +58,7 @@ public class PostActivity extends AppCompatActivity {
         postCommentButton = findViewById(R.id.postCommentButton);
         editText = findViewById(R.id.commentEditText);
         commentListView = findViewById(R.id.commentListView);
+        nameTextView = findViewById(R.id.postUsernameTextView);
 
         commentList = new ArrayList<>();
         adapter =
@@ -70,6 +73,19 @@ public class PostActivity extends AppCompatActivity {
         authUid = authUser.getUid();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        mDatabase.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                nameTextView.setText(user.getUsername());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         mDatabase.child("posts").child(uid).child(pid).addValueEventListener(new ValueEventListener() {
             @Override
