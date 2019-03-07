@@ -45,26 +45,6 @@ public class FindActivity extends AppCompatActivity {
         editText = findViewById(R.id.key);
         listView.setAdapter(adapter);
 
-//        editText.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//                if(s.toString().isEmpty()){
-//                    entryList.clear();
-//                    entryList.addAll(allTempData);
-//                }
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//            }
-//        });
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -74,6 +54,7 @@ public class FindActivity extends AppCompatActivity {
                 Intent intent = new Intent(FindActivity.this, UserActivity.class);
                 intent.putExtra("UID", uid);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -104,6 +85,7 @@ public class FindActivity extends AppCompatActivity {
 
     public void search(View view) {
         String key = editText.getText().toString();
+        editText.setText("");
         if(!TextUtils.isEmpty(key) && !allTempData.isEmpty()){
             List<Map.Entry> temp = new ArrayList<>();
             for(Map.Entry m:allTempData){
