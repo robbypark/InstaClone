@@ -16,7 +16,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
     private static class ViewHolder {
         private TextView nameTextView;
         private TextView commentTextView;
+        private TextView timeTextView;
     }
 
     public CommentAdapter(Context context, int textViewResourceId, ArrayList<Comment> items) {
@@ -60,6 +63,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
             viewHolder = new ViewHolder();
             viewHolder.nameTextView = (TextView) convertView.findViewById(R.id.commentUserTextView);
             viewHolder.commentTextView = (TextView) convertView.findViewById(R.id.commentTextView);
+            viewHolder.timeTextView = (TextView) convertView.findViewById(R.id.commentTimeTextView);
 
             convertView.setTag(viewHolder);
         } else {
@@ -68,9 +72,16 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
 
         Comment item = getItem(position);
         if (item!= null) {
+            // comment
             viewHolder.commentTextView.setText(item.getComment());
+            // username
             User user = users.get(item.getUid());
             viewHolder.nameTextView.setText(user.getUsername());
+            // time
+            long time = item.getTime();
+            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd HH:mm");
+            Date resultdate = new Date(time);
+            viewHolder.timeTextView.setText(sdf.format(resultdate));
         }
 
         return convertView;
