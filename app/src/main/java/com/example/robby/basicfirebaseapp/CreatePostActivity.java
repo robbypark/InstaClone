@@ -96,7 +96,10 @@ public class CreatePostActivity extends AppCompatActivity {
         // convert from Bitmap to Base64
         String base64Image = ImageUtils.encodeToBase64(selectedImage, Bitmap.CompressFormat.JPEG, 100);
 
-        Post post = new Post(title, time, base64Image, authUid);
+        // TODO: implement hashtag here
+        String hashtag = "";
+
+        Post post = new Post(title, time, base64Image, authUid, hashtag);
 
         // add post for current user
         String postId = mDatabase.child("posts").child(authUid).push().getKey();
