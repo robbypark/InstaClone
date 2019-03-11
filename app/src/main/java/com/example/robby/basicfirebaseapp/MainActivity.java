@@ -1,6 +1,7 @@
 package com.example.robby.basicfirebaseapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,8 +13,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.robby.basicfirebaseapp.model.User;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView nameTextView;
     private TextView emailTextView;
+    private ImageView profileImageView;
     //private ListView postListView;
     private GridView gridView;
     private PostAdapter adapter;
@@ -75,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         //postListView = findViewById(R.id.mainPostListView);
         newsFeedButton = findViewById(R.id.newsFeedButton);
         gridView = findViewById(R.id.postGridView);
+        profileImageView = findViewById(R.id.mainProfileImageView);
 
         // retrieves an instance of FirebaseDatabase and references the location to write to
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -199,6 +205,8 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(){
         nameTextView.setText(authUser.getDisplayName());
         emailTextView.setText(authUser.getEmail());
+        Uri uri = authUser.getPhotoUrl();
+        Glide.with(this).load(uri).apply(new RequestOptions().placeholder(R.drawable.blue).error(R.drawable.blue)).into(profileImageView);
 
         mDatabase.child("followers").child(authUid).addValueEventListener(new ValueEventListener() {
             @Override

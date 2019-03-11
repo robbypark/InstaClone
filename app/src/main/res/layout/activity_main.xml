@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/profile_image"
+        android:id="@+id/mainProfileImageView"
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:layout_marginStart="8dp"
@@ -50,7 +50,7 @@
         android:layout_marginLeft="80dp"
         android:layout_marginTop="24dp"
         android:text="@string/pname"
-        app:layout_constraintStart_toEndOf="@+id/profile_image"
+        app:layout_constraintStart_toEndOf="@+id/mainProfileImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -62,7 +62,7 @@
         android:layout_marginBottom="8dp"
         android:text="followers"
         app:layout_constraintBottom_toTopOf="@+id/postGridView"
-        app:layout_constraintStart_toEndOf="@+id/profile_image" />
+        app:layout_constraintStart_toEndOf="@+id/mainProfileImageView" />
 
     <Button
         android:id="@+id/btnFollowing"
@@ -110,7 +110,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+        app:layout_constraintTop_toBottomOf="@+id/mainProfileImageView" />
 
     <android.support.constraint.Group
         android:id="@+id/group3"
