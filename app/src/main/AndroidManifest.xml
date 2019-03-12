@@ -21,6 +21,7 @@
         <activity android:name=".FollowerActivity" />
         <activity android:name=".UserActivity" />
         <activity android:name=".FindActivity" />
+        <activity android:name=".FilterActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

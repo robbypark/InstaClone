@@ -19,25 +19,34 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+
+
+
 public class CreatePostActivity extends AppCompatActivity {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int RC_LOAD_IMG = 10;
+    private static final int REQUEST_IMAGE_CAPTURE = 15;
+    private static final int RC_FILTER_IMAGE = 20;
+
+    private FirebaseUser authUser;
+    private String authUid;
+    private DatabaseReference mDatabase;
+    protected Bitmap selectedImage;
 
     private ImageView imageView;
     private Button btnUploadImage;
     private EditText editTextPost;
     private Button btnSubmit;
     private Button btnCamera;
+    private Button filterButton;
 
-    private FirebaseUser authUser;
-    private String authUid;
-    private DatabaseReference mDatabase;
 
-    private Bitmap selectedImage;
-    private static final int RC_LOAD_IMG = 10;
+//    private ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//    private byte[] byteArray;
 
 
     @Override
@@ -50,6 +59,8 @@ public class CreatePostActivity extends AppCompatActivity {
         imageView = findViewById(R.id.createPostImageView);
         btnUploadImage = findViewById(R.id.btnUploadImage);
         btnCamera = findViewById(R.id.cameraButton);
+
+        filterButton = findViewById(R.id.filter);
 
         authUser = FirebaseAuth.getInstance().getCurrentUser();
         authUid = authUser.getUid();
@@ -83,6 +94,22 @@ public class CreatePostActivity extends AppCompatActivity {
                 Intent returnIntent = new Intent();
                 setResult(RESULT_OK, returnIntent);
                 finish();
+            }
+        });
+
+
+        // filter
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(selectedImage != null){
+                    Intent intent = new Intent(CreatePostActivity.this, FilterActivity.class);
+                    intent.putExtra("picture", selectedImage);
+                    startActivityForResult(intent, RC_FILTER_IMAGE);
+                } else {
+                    Toast.makeText(CreatePostActivity.this, "Please add an image first.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -120,16 +147,19 @@ public class CreatePostActivity extends AppCompatActivity {
                 e.printStackTrace();
                 Toast.makeText(CreatePostActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
             }
-        }else {
-            Toast.makeText(CreatePostActivity.this, "You haven't picked Image",Toast.LENGTH_LONG).show();
-        }
-
-        if (reqCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        } else if (reqCode == RC_FILTER_IMAGE && resultCode == RESULT_OK) {
+            // get result of filter
             Bundle extras = data.getExtras();
-            selectedImage = (Bitmap) extras.get("data");
+            Bitmap image = (Bitmap) extras.getParcelable("data");
+            // set selectedImage
+            selectedImage = image;
+            // set imageView
             imageView.setImageBitmap(selectedImage);
         }
-
     }
 
+
+
 }
+
+
