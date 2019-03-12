@@ -176,12 +176,25 @@ public class MainActivity extends AppCompatActivity {
                 // sign in succeeded
                 authUser = FirebaseAuth.getInstance().getCurrentUser();
                 authUid = authUser.getUid();
-                // add user to database
-                User user = new User(authUser.getDisplayName(), authUser.getEmail());
-                mDatabase.child("users").child(authUser.getUid()).setValue(user);
-                // update UI elements
-                updateUI();
-                attachPostListeners();
+
+                mDatabase.child("users").child(authUid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(!dataSnapshot.exists()){
+                            // add user to database
+                            User user = new User(authUser.getDisplayName(), authUser.getEmail(), null);
+                            mDatabase.child("users").child(authUser.getUid()).setValue(user);
+                            // update UI elements
+                        }
+                        updateUI();
+                        attachPostListeners();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
             } else {
                 // sign in failed
@@ -204,6 +217,13 @@ public class MainActivity extends AppCompatActivity {
             postList.clear();
             for (Map.Entry<String, Object> item : posts.entrySet()) {
                 postList.add(item);
+
+                // post like db listener
+                mDatabase.child("likes").child(item.getKey()).addValueEventListener(mValueEventListener1);
+                // post comment db listener
+                mDatabase.child("comments").child(item.getKey()).addValueEventListener(mValueEventListener2);
+
+
             }
         }
     }
@@ -381,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (temp1 != null && temp1.getKey().equals(dataSnapshot.getKey()) && !temp1.toString().equalsIgnoreCase(dataSnapshot.toString())) {
-                tip("dynamic remind", "Post is update", "Your post is update, Click to see more details.", dataSnapshot.getKey());
+                tip("dynamic remind", "Post is updated", "Your post is updated. Click to see more details.", dataSnapshot.getKey());
             }
             temp1 = dataSnapshot;
         }
@@ -396,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (temp2 != null && temp2.getKey().equals(dataSnapshot.getKey()) && !temp2.toString().equalsIgnoreCase(dataSnapshot.toString())) {
-                tip("dynamic remind", "Post is update", "Your post is update, Click to see more details.", dataSnapshot.getKey());
+                tip("dynamic remind", "Post is updated", "Your post is updated. Click to see more details.", dataSnapshot.getKey());
             }
             temp2 = dataSnapshot;
         }
