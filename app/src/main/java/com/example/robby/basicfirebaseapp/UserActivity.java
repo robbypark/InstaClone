@@ -54,7 +54,7 @@ public class UserActivity extends AppCompatActivity {
         authUid = authUser.getUid();
         // get user info to display
         uid = getIntent().getStringExtra("UID");
-        
+
         // get postList
         postList = new ArrayList<>();
         adapter = new PostAdapter(UserActivity.this, R.layout.post_list_item, postList);

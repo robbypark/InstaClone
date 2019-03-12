@@ -1,6 +1,7 @@
 package com.example.robby.basicfirebaseapp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView nameTextView;
     private TextView emailTextView;
     private ImageView profileImageView;
-    //private ListView postListView;
     private GridView gridView;
     private PostAdapter adapter;
 
@@ -77,17 +77,15 @@ public class MainActivity extends AppCompatActivity {
         postButton = findViewById(R.id.btnPost);
         nameTextView = findViewById(R.id.nameTextView);
         emailTextView = findViewById(R.id.emailTextView);
-        //postListView = findViewById(R.id.mainPostListView);
         newsFeedButton = findViewById(R.id.newsFeedButton);
         gridView = findViewById(R.id.postGridView);
-        profileImageView = findViewById(R.id.mainProfileImageView);
+        profileImageView = findViewById(R.id.editUserImageView);
 
         // retrieves an instance of FirebaseDatabase and references the location to write to
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         postList = new ArrayList<>();
         adapter = new PostAdapter(MainActivity.this, R.layout.post_list_item, postList);
-        //postListView.setAdapter(adapter);
         gridView.setNumColumns(3);
         gridView.setAdapter(adapter);
 
@@ -205,8 +203,6 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(){
         nameTextView.setText(authUser.getDisplayName());
         emailTextView.setText(authUser.getEmail());
-        Uri uri = authUser.getPhotoUrl();
-        Glide.with(this).load(uri).apply(new RequestOptions().placeholder(R.drawable.blue).error(R.drawable.blue)).into(profileImageView);
 
         mDatabase.child("followers").child(authUid).addValueEventListener(new ValueEventListener() {
             @Override
@@ -224,6 +220,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 followingButton.setText(dataSnapshot.getChildrenCount() + " following");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        mDatabase.child("users").child(authUid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User currentUser = dataSnapshot.getValue(User.class);
+                if(currentUser.getImage() != null){
+                    System.out.println("here");
+                    Bitmap bitmap = ImageUtils.decodeBase64(currentUser.getImage());
+                    profileImageView.setImageBitmap(bitmap);
+
+                    nameTextView.setText(currentUser.getUsername());
+                }
             }
 
             @Override
