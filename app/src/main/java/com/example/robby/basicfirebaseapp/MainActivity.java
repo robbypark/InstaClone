@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 followersButton.setText(dataSnapshot.getChildrenCount() + " followers");
                 if (temp != null && temp.getKey().equals(dataSnapshot.getKey()) && !temp.toString().equalsIgnoreCase(dataSnapshot.toString())) {
-                    tip("dynamic remind", "Followers is update", "Your Followers is update, Click to see more details.", dataSnapshot.getKey());
+                    tip("dynamic remind", "Follower update", "Someone followed or unfollowed!", dataSnapshot.getKey());
                 }
                 temp = dataSnapshot;
             }
@@ -401,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (temp1 != null && temp1.getKey().equals(dataSnapshot.getKey()) && !temp1.toString().equalsIgnoreCase(dataSnapshot.toString())) {
-                tip("dynamic remind", "Post is updated", "Your post is updated. Click to see more details.", dataSnapshot.getKey());
+                tip("dynamic remind", "Like update", "Someone liked or unliked your post!", dataSnapshot.getKey());
             }
             temp1 = dataSnapshot;
         }
@@ -416,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if (temp2 != null && temp2.getKey().equals(dataSnapshot.getKey()) && !temp2.toString().equalsIgnoreCase(dataSnapshot.toString())) {
-                tip("dynamic remind", "Post is updated", "Your post is updated. Click to see more details.", dataSnapshot.getKey());
+                tip("dynamic remind", "Comment update", "Someone commented on your post!", dataSnapshot.getKey());
             }
             temp2 = dataSnapshot;
         }
