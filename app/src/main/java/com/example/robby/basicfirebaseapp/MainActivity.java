@@ -1,8 +1,14 @@
 package com.example.robby.basicfirebaseapp;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_EDIT = 70;
     private static final int RC_POST = 71;
 
+    private DataSnapshot temp;
+    private DataSnapshot temp1;
+    private DataSnapshot temp2;
+
 
 
     @Override
@@ -76,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
         emailTextView = findViewById(R.id.emailTextView);
         newsFeedButton = findViewById(R.id.newsFeedButton);
         gridView = findViewById(R.id.postGridView);
-        profileImageView = findViewById(R.id.userImageView);
+        profileImageView = findViewById(R.id.mainUserImageView);
 
         // retrieves an instance of FirebaseDatabase and references the location to write to
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -206,6 +216,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 followersButton.setText(dataSnapshot.getChildrenCount() + " followers");
+                if (temp != null && temp.getKey().equals(dataSnapshot.getKey()) && !temp.toString().equalsIgnoreCase(dataSnapshot.toString())) {
+                    tip("dynamic remind", "Followers is update", "Your Followers is update, Click to see more details.", dataSnapshot.getKey());
+                }
+                temp = dataSnapshot;
             }
 
             @Override
@@ -312,5 +326,87 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    public void tip(String tiker, String title, String content, String pid) {
+        /*NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(this);
+        Intent intent = new Intent(MainActivity.this, PostActivity.class);
+        intent.putExtra("PID", pid);
+        intent.putExtra("UID", authUid);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,intent, 0);
+        Notification notification = new Notification.Builder(this)
+                .setTicker(tiker)
+                .setContentTitle(title)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(contentIntent)
+                .setContentText(content).build();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(getPackageName(), TAG, NotificationManager.IMPORTANCE_DEFAULT);
+        }
+        mNotifyMgr.notify(0, notification);*/
+
+        Notification notification = null;
+        Intent intent = new Intent(MainActivity.this, MainActivity.class);
+        intent.putExtra("PID", pid);
+        intent.putExtra("UID", authUid);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel("post_work", TAG, NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(mChannel);
+            notification = new Notification.Builder(this)
+                    .setChannelId("post_work")
+                    .setTicker(tiker)
+                    .setContentTitle(title)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true)
+                    .setContentText(content).build();
+        } else {
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                    .setTicker(tiker)
+                    .setContentTitle(title)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentIntent(contentIntent)
+                    .setContentText(content)
+                    .setAutoCancel(true)
+                    .setOngoing(true)
+                    .setChannelId("post_work");//无效
+            notification = notificationBuilder.build();
+        }
+        notificationManager.notify(111123, notification);
+    }
+
+    ValueEventListener mValueEventListener1 = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if (temp1 != null && temp1.getKey().equals(dataSnapshot.getKey()) && !temp1.toString().equalsIgnoreCase(dataSnapshot.toString())) {
+                tip("dynamic remind", "Post is update", "Your post is update, Click to see more details.", dataSnapshot.getKey());
+            }
+            temp1 = dataSnapshot;
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
+
+    ValueEventListener mValueEventListener2 = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if (temp2 != null && temp2.getKey().equals(dataSnapshot.getKey()) && !temp2.toString().equalsIgnoreCase(dataSnapshot.toString())) {
+                tip("dynamic remind", "Post is update", "Your post is update, Click to see more details.", dataSnapshot.getKey());
+            }
+            temp2 = dataSnapshot;
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+    };
+
+
 
 }

@@ -60,7 +60,7 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        profileImageView = findViewById(R.id.userImageView);
+        profileImageView = findViewById(R.id.editUserImageView);
         uploadButton = findViewById(R.id.editUploadImageButton);
         saveButton = findViewById(R.id.editSaveButton);
         nameEditText = findViewById(R.id.name);

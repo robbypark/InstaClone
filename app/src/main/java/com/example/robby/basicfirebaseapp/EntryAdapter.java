@@ -1,10 +1,12 @@
 package com.example.robby.basicfirebaseapp;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -16,6 +18,7 @@ public class EntryAdapter extends ArrayAdapter<Map.Entry> {
 
     private static class ViewHolder {
         private TextView nameTextView;
+        private ImageView imageView;
     }
 
     public EntryAdapter(Context context, int textViewResourceId, ArrayList<Map.Entry> items) {
@@ -29,7 +32,9 @@ public class EntryAdapter extends ArrayAdapter<Map.Entry> {
                     .inflate(R.layout.map_list_item, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.nameTextView = (TextView) convertView.findViewById(R.id.label);
+            viewHolder.nameTextView = (TextView) convertView.findViewById(R.id.mapItemTextView);
+            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.mapItemImageView);
+
 
             convertView.setTag(viewHolder);
         } else {
@@ -40,6 +45,11 @@ public class EntryAdapter extends ArrayAdapter<Map.Entry> {
         if (item!= null) {
             Map singleUser = (Map) item.getValue();
             viewHolder.nameTextView.setText((String) singleUser.get("username"));
+            String imageString = (String) singleUser.get("image");
+            if(imageString != null){
+                Bitmap bitmap = ImageUtils.decodeBase64(imageString);
+                viewHolder.imageView.setImageBitmap(bitmap);
+            }
         }
 
         return convertView;
