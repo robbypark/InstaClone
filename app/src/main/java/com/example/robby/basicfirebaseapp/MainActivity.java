@@ -2,7 +2,6 @@ package com.example.robby.basicfirebaseapp;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,8 +16,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.robby.basicfirebaseapp.model.User;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         emailTextView = findViewById(R.id.emailTextView);
         newsFeedButton = findViewById(R.id.newsFeedButton);
         gridView = findViewById(R.id.postGridView);
-        profileImageView = findViewById(R.id.editUserImageView);
+        profileImageView = findViewById(R.id.userImageView);
 
         // retrieves an instance of FirebaseDatabase and references the location to write to
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -234,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User currentUser = dataSnapshot.getValue(User.class);
                 if(currentUser.getImage() != null){
-                    System.out.println("here");
                     Bitmap bitmap = ImageUtils.decodeBase64(currentUser.getImage());
                     profileImageView.setImageBitmap(bitmap);
 

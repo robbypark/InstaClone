@@ -1,6 +1,7 @@
 package com.example.robby.basicfirebaseapp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.robby.basicfirebaseapp.model.User;
@@ -28,6 +30,7 @@ public class UserActivity extends AppCompatActivity {
     private TextView emailTextView;
     private Button btnFollow;
     private GridView gridView;
+    private ImageView userImageView;
 
     private DatabaseReference mDatabase;
     private FirebaseUser authUser;
@@ -45,8 +48,9 @@ public class UserActivity extends AppCompatActivity {
 
         nameTextView = findViewById(R.id.nameTextView);
         emailTextView = findViewById(R.id.emailTextView);
-        btnFollow = findViewById(R.id.btnFollow);  //TODO check if already following
+        btnFollow = findViewById(R.id.btnFollow);
         gridView = findViewById(R.id.userPostGridView);
+        userImageView = findViewById(R.id.userImageView);
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         // get authUser
@@ -67,6 +71,11 @@ public class UserActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 nameTextView.setText(user.getUsername());
                 emailTextView.setText(user.getEmail());
+                if(user.getImage() != null){
+                    Bitmap bitmap = ImageUtils.decodeBase64(user.getImage());
+                    userImageView.setImageBitmap(bitmap);
+
+                }
             }
 
             @Override
