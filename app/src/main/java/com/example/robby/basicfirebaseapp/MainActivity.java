@@ -178,7 +178,8 @@ public class MainActivity extends AppCompatActivity {
 
             } else {
                 // sign in failed
-                // TODO handle failed sign in
+                this.finishAffinity();
+
             }
         } else if(requestCode == RC_EDIT){
             updateUI();
