@@ -77,7 +77,6 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
 
-        // TODO: fix camera
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,11 +106,16 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // TODO handle missing data
-                createPost();
-                // finish activity
-                Intent returnIntent = new Intent();
-                setResult(RESULT_OK, returnIntent);
-                finish();
+                if(!editTextPost.getText().toString().equals("")){
+                    createPost();
+                    // finish activity
+                    Intent returnIntent = new Intent();
+                    setResult(RESULT_OK, returnIntent);
+                    finish();
+                } else {
+                    Toast.makeText(CreatePostActivity.this, "Please enter a post name.", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
     }
@@ -148,7 +152,7 @@ public class CreatePostActivity extends AppCompatActivity {
                 e.printStackTrace();
                 Toast.makeText(CreatePostActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
             }
-        } else if (reqCode == RC_FILTER_IMAGE && resultCode == RESULT_OK) {
+        } else if (reqCode == RC_FILTER_IMAGE && resultCode == RESULT_OK || reqCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             // get result of filter
             Bundle extras = data.getExtras();
             Bitmap image = (Bitmap) extras.getParcelable("data");
