@@ -2,8 +2,6 @@ package com.example.robby.basicfirebaseapp;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 
 
@@ -12,171 +10,124 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-public class FilterActivity extends CreatePostActivity {
-    Button b1, b2, b3, submit;
-    ImageView im;
+import com.zomato.photofilters.SampleFilters;
+import com.zomato.photofilters.imageprocessors.Filter;
 
-    private Bitmap bmp;
-    private Bitmap operation;// = getSomeVariable();
+
+public class FilterActivity extends CreatePostActivity {
+    private Bitmap originalImage;
+    private Bitmap filteredImage;
+
+    private ImageView imageView;
+    private Button blueMessButton;
+    private Button starlitButton;
+    private Button awestruckButton;
+    private Button limeStutterButton;
+    private Button nightWhisperButton;
+    private Button originalButton;
+
+    private Button submit;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
 
-        b1 = (Button) findViewById(R.id.button);
-        b2 = (Button) findViewById(R.id.button2);
-        b3 = (Button) findViewById(R.id.button3);
-        submit = (Button) findViewById(R.id.filterSubmitButton);
+        System.loadLibrary("NativeImageProcessor");
 
-        im = (ImageView) findViewById(R.id.imageView1);
+        imageView = findViewById(R.id.imageView1);
+        blueMessButton = findViewById(R.id.blueMessButton);
+        starlitButton = findViewById(R.id.starlitButton);
+        awestruckButton = findViewById(R.id.awestruckButton);
+        limeStutterButton = findViewById(R.id.limeStutterButton);
+        nightWhisperButton = findViewById(R.id.nightWhisperButton);
+        originalButton = findViewById(R.id.originalButton);
+        submit = findViewById(R.id.filterSubmitButton);
 
         Bundle extras = getIntent().getExtras();
-//        byte[] byteArray = extras.getByteArray("picture");
-        Bitmap image = (Bitmap) extras.getParcelable("picture");
-        im.setImageBitmap(image);
+        originalImage = (Bitmap) extras.getParcelable("picture");
+        imageView.setImageBitmap(originalImage);
 
-        BitmapDrawable abmp1 = (BitmapDrawable) im.getDrawable();
-        bmp = abmp1.getBitmap();
+        blueMessButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Accessing single filter...
+                Bitmap image = originalImage.copy(Bitmap.Config.ARGB_8888, true);
+                // apply filter
+                Filter fooFilter = SampleFilters.getBlueMessFilter();
+                filteredImage = fooFilter.processFilter(image);
+                imageView.setImageBitmap(filteredImage);
+            }
+        });
 
+        starlitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Accessing single filter...
+                Bitmap image = originalImage.copy(Bitmap.Config.ARGB_8888, true);
+                // apply filter
+                Filter fooFilter = SampleFilters.getStarLitFilter();
+                filteredImage = fooFilter.processFilter(image);
+                imageView.setImageBitmap(filteredImage);
+            }
+        });
+
+        awestruckButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Accessing single filter...
+                Bitmap image = originalImage.copy(Bitmap.Config.ARGB_8888, true);
+                // apply filter
+                Filter fooFilter = SampleFilters.getAweStruckVibeFilter();
+                filteredImage = fooFilter.processFilter(image);
+                imageView.setImageBitmap(filteredImage);
+            }
+        });
+
+        limeStutterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Accessing single filter...
+                Bitmap image = originalImage.copy(Bitmap.Config.ARGB_8888, true);
+                // apply filter
+                Filter fooFilter = SampleFilters.getLimeStutterFilter();
+                filteredImage = fooFilter.processFilter(image);
+                imageView.setImageBitmap(filteredImage);
+            }
+        });
+
+        nightWhisperButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Accessing single filter...
+                Bitmap image = originalImage.copy(Bitmap.Config.ARGB_8888, true);
+                // apply filter
+                Filter fooFilter = SampleFilters.getNightWhisperFilter();
+                filteredImage = fooFilter.processFilter(image);
+                imageView.setImageBitmap(filteredImage);
+            }
+        });
+
+        originalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageView.setImageBitmap(originalImage);
+                filteredImage = originalImage;
+            }
+        });
+
+        // submit
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // assume imageview contains latest image
-                Bitmap image = ((BitmapDrawable) im.getDrawable()).getBitmap();
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("data", image);
+                returnIntent.putExtra("data", filteredImage);
                 setResult(RESULT_OK, returnIntent);
                 finish();
 
             }
         });
-
-    }
-    public void gray(View view) {
-        operation = Bitmap.createBitmap(bmp.getWidth(),bmp.getHeight(), bmp.getConfig());
-        double red = 0.33;
-        double green = 0.59;
-        double blue = 0.11;
-
-        for (int i = 0; i < bmp.getWidth(); i++) {
-            for (int j = 0; j < bmp.getHeight(); j++) {
-                int p = bmp.getPixel(i, j);
-                int r = Color.red(p);
-                int g = Color.green(p);
-                int b = Color.blue(p);
-
-                r = (int) red * r;
-                g = (int) green * g;
-                b = (int) blue * b;
-                operation.setPixel(i, j, Color.argb(Color.alpha(p), r, g, b));
-            }
-        }
-        im.setImageBitmap(operation);
-    }
-
-    public void bright(View view){
-        operation= Bitmap.createBitmap(bmp.getWidth(), bmp.getHeight(),bmp.getConfig());
-
-        for(int i=0; i<bmp.getWidth(); i++){
-            for(int j=0; j<bmp.getHeight(); j++){
-                int p = bmp.getPixel(i, j);
-                int r = Color.red(p);
-                int g = Color.green(p);
-                int b = Color.blue(p);
-                int alpha = Color.alpha(p);
-
-                r = 100  +  r;
-                g = 100  + g;
-                b = 100  + b;
-                alpha = 100 + alpha;
-                operation.setPixel(i, j, Color.argb(alpha, r, g, b));
-            }
-        }
-        im.setImageBitmap(operation);
-    }
-
-    public void dark(View view){
-        operation= Bitmap.createBitmap(bmp.getWidth(),bmp.getHeight(),bmp.getConfig());
-
-        for(int i=0; i<bmp.getWidth(); i++){
-            for(int j=0; j<bmp.getHeight(); j++){
-                int p = bmp.getPixel(i, j);
-                int r = Color.red(p);
-                int g = Color.green(p);
-                int b = Color.blue(p);
-                int alpha = Color.alpha(p);
-
-                r =  r - 50;
-                g =  g - 50;
-                b =  b - 50;
-                alpha = alpha -50;
-                operation.setPixel(i, j, Color.argb(Color.alpha(p), r, g, b));
-            }
-        }
-        im.setImageBitmap(operation);
-    }
-
-    public void gama(View view) {
-        operation = Bitmap.createBitmap(bmp.getWidth(),bmp.getHeight(),bmp.getConfig());
-
-        for(int i=0; i<bmp.getWidth(); i++){
-            for(int j=0; j<bmp.getHeight(); j++){
-                int p = bmp.getPixel(i, j);
-                int r = Color.red(p);
-                int g = Color.green(p);
-                int b = Color.blue(p);
-                int alpha = Color.alpha(p);
-
-                r =  r + 150;
-                g =  0;
-                b =  0;
-                alpha = 0;
-                operation.setPixel(i, j, Color.argb(Color.alpha(p), r, g, b));
-            }
-        }
-        im.setImageBitmap(operation);
-    }
-
-    public void green(View view){
-        operation = Bitmap.createBitmap(bmp.getWidth(),bmp.getHeight(), bmp.getConfig());
-
-        for(int i=0; i<bmp.getWidth(); i++){
-            for(int j=0; j<bmp.getHeight(); j++){
-                int p = bmp.getPixel(i, j);
-                int r = Color.red(p);
-                int g = Color.green(p);
-                int b = Color.blue(p);
-                int alpha = Color.alpha(p);
-
-                r =  0;
-                g =  g+150;
-                b =  0;
-                alpha = 0;
-                operation.setPixel(i, j, Color.argb(Color.alpha(p), r, g, b));
-            }
-        }
-        im.setImageBitmap(operation);
-    }
-
-    public void blue(View view){
-        operation = Bitmap.createBitmap(bmp.getWidth(),bmp.getHeight(), bmp.getConfig());
-
-        for(int i=0; i<bmp.getWidth(); i++){
-            for(int j=0; j<bmp.getHeight(); j++){
-                int p = bmp.getPixel(i, j);
-                int r = Color.red(p);
-                int g = Color.green(p);
-                int b = Color.blue(p);
-                int alpha = Color.alpha(p);
-
-                r =  0;
-                g =  0;
-                b =  b+150;
-                alpha = 0;
-                operation.setPixel(i, j, Color.argb(Color.alpha(p), r, g, b));
-            }
-        }
-        im.setImageBitmap(operation);
     }
 }

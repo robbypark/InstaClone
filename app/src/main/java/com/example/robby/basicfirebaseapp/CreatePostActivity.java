@@ -1,5 +1,6 @@
 package com.example.robby.basicfirebaseapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 
 
@@ -75,6 +77,7 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
 
+        // TODO: fix camera
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,19 +87,6 @@ public class CreatePostActivity extends AppCompatActivity {
                 }
             }
         });
-
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO handle missing data
-                createPost();
-                // finish activity
-                Intent returnIntent = new Intent();
-                setResult(RESULT_OK, returnIntent);
-                finish();
-            }
-        });
-
 
         // filter
         filterButton.setOnClickListener(new View.OnClickListener() {
@@ -113,6 +103,17 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
 
+        btnSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO handle missing data
+                createPost();
+                // finish activity
+                Intent returnIntent = new Intent();
+                setResult(RESULT_OK, returnIntent);
+                finish();
+            }
+        });
     }
 
     // create post and upload it to Firebase
