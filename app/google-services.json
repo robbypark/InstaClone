@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "713736379090",
-    "firebase_url": "https://basicfirebaseapp-38465.firebaseio.com",
-    "project_id": "basicfirebaseapp-38465",
-    "storage_bucket": "basicfirebaseapp-38465.appspot.com"
+    "project_number": "1077961633564",
+    "firebase_url": "https://basicfirebaseapp-a798b.firebaseio.com",
+    "project_id": "basicfirebaseapp-a798b",
+    "storage_bucket": "basicfirebaseapp-a798b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:713736379090:android:37b4a5ba3e42d394",
+        "mobilesdk_app_id": "1:1077961633564:android:37b4a5ba3e42d394",
         "android_client_info": {
           "package_name": "com.example.robby.basicfirebaseapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "713736379090-dmqsbe54qj4ql3ljiefmg1hbge9b8tk5.apps.googleusercontent.com",
+          "client_id": "1077961633564-41gjl4s4hmplobc33qs7kimveen38soi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCK9-B34nMXBotPzYH53Iqq6mSWEEJ6vsk"
+          "current_key": "AIzaSyAwLdujRaZV74HngpL9ttsDCwubx3D1pH4"
         }
       ],
       "services": {
