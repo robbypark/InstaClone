@@ -20,6 +20,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FindActivity extends AppCompatActivity {
 
@@ -33,6 +35,8 @@ public class FindActivity extends AppCompatActivity {
     private EditText editText;
 
     private ArrayList<Map.Entry> postList;
+    private ArrayList<Map.Entry> filteredPostList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +47,14 @@ public class FindActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        filteredPostList = new ArrayList<>();
         postList = new ArrayList<>();
         entryList = new ArrayList<>();
         allTempData = new ArrayList<>();
 
         adapter = new EntryAdapter(FindActivity.this, R.layout.map_list_item, entryList);
 
-        feedAdapter = new FeedAdapter(FindActivity.this, R.layout.map_list_item, postList);
+        feedAdapter = new FeedAdapter(FindActivity.this, R.layout.map_list_item, filteredPostList);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -130,8 +135,11 @@ public class FindActivity extends AppCompatActivity {
 
     public void search(View view) {
         String text = editText.getText().toString();
+        ArrayList<String> hashTagList = findHashTags(text);
         editText.setText("");
-        if(text.length() > 0 && text.charAt(0)=='#'){
+
+        if(!hashTagList.isEmpty()){
+            filterPosts(hashTagList);
             listView.setAdapter(feedAdapter);
         } else {
             listView.setAdapter(adapter);
@@ -155,5 +163,32 @@ public class FindActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void filterPosts(ArrayList<String> hashTagList) {
+        // filter postList and store result in filtered post list
+        filteredPostList.clear();
+        for(Map.Entry postEntry : postList){
+            for(String hashtag : hashTagList){
+                Map map = (Map) postEntry.getValue();
+                String title = (String) map.get("title");
+                if(title.contains(hashtag)){
+                    filteredPostList.add(postEntry);
+                }
+            }
+        }
+    }
+
+    private ArrayList<String> findHashTags(String text){
+        ArrayList<String> hashtags = new ArrayList<>();
+        String regexPattern = "(#\\w+)";
+        Pattern p = Pattern.compile(regexPattern);
+        Matcher m = p.matcher(text);
+        while (m.find()) {
+            String hashtag = m.group(1);
+            // Add hashtag to ArrayList
+            hashtags.add(hashtag);
+        }
+        return hashtags;
     }
 }
