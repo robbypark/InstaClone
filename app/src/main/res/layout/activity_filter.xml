@@ -8,7 +8,7 @@
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="395dp"
+        android:layout_width="0dp"
         android:layout_height="250dp"
 
         android:layout_marginStart="8dp"
@@ -52,6 +52,7 @@
         android:background="@drawable/round_rectangle"
         android:text="blue mess"
         android:theme="@style/FlatButton"
+        app:layout_constraintBottom_toTopOf="@+id/filterSubmitButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView1" />
@@ -107,7 +108,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:background="@drawable/round_rectangle"
-        android:text="night whisper"
+        android:text="night"
         android:theme="@style/FlatButton"
         app:layout_constraintBaseline_toBaselineOf="@+id/starlitButton"
         app:layout_constraintStart_toEndOf="@+id/starlitButton" />

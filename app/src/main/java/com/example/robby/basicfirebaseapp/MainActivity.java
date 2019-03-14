@@ -69,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_POST = 71;
 
 
-    private ValueEventListener likeValueEventListener;
-    private ValueEventListener commentValueEventListener;
-    private ValueEventListener followValueEventListener;
+//    private ValueEventListener likeValueEventListener;
+//    private ValueEventListener commentValueEventListener;
+//    private ValueEventListener followValueEventListener;
 
     private boolean showFollowerNotifcations = false;
 
