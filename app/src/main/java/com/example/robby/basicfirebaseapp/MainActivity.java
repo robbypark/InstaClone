@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.robby.basicfirebaseapp.model.User;
 import com.firebase.ui.auth.AuthUI;
@@ -67,9 +68,12 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_EDIT = 70;
     private static final int RC_POST = 71;
 
-    private DataSnapshot temp;
-    private DataSnapshot temp1;
-    private DataSnapshot temp2;
+
+    private ValueEventListener likeValueEventListener;
+    private ValueEventListener commentValueEventListener;
+    private ValueEventListener followValueEventListener;
+
+    private boolean showFollowerNotifcations = false;
 
 
 
@@ -162,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, RC_POST);
             }
         });
+
     }
 
     @Override
@@ -213,18 +218,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void collectPosts(Map<String,Object> posts) {
         // TODO: postList out of order?
+        Log.d(TAG, "collectPosts: Here");
+
         if(posts != null) {
             postList.clear();
             for (Map.Entry<String, Object> item : posts.entrySet()) {
                 postList.add(item);
 
-                // post like db listener
-                mDatabase.child("likes").child(item.getKey()).addValueEventListener(mValueEventListener1);
-                // post comment db listener
-                mDatabase.child("comments").child(item.getKey()).addValueEventListener(mValueEventListener2);
-
-
             }
+//            createLikeCommentEventListeners();
         }
     }
 
@@ -236,10 +238,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 followersButton.setText(dataSnapshot.getChildrenCount() + " followers");
-                if (temp != null && temp.getKey().equals(dataSnapshot.getKey()) && !temp.toString().equalsIgnoreCase(dataSnapshot.toString())) {
-                    tip("dynamic remind", "Follower update", "Someone followed or unfollowed!", dataSnapshot.getKey());
+
+                if(!showFollowerNotifcations){
+                    showFollowerNotifcations = true;
+                } else {
+                    tip("dynamic remind", "Follower update", "Someone followed or unfollowed!");
                 }
-                temp = dataSnapshot;
             }
 
             @Override
@@ -347,28 +351,62 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+//    private void createLikeCommentEventListeners(){
+//
+//        for(Map.Entry post : postList){
+//            mDatabase.child("likes").child((String)post.getKey()).addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+////                if (temp1 != null && temp1.getKey().equals(dataSnapshot.getKey()) && !temp1.toString().equalsIgnoreCase(dataSnapshot.toString())) {
+////                    tip("dynamic remind", "Like update", "Someone liked or unliked your post!", dataSnapshot.getKey());
+////                }
+////                temp1 = dataSnapshot;
+////                    if(dataSnapshot.getValue() != null){
+//////                    Toast.makeText(MainActivity.this, "Like Update", Toast.LENGTH_SHORT).show();
+////                        Log.d(TAG, "onDataChange: like update");
+////                    }
+//                    if(dataSnapshot.exists()){
+//                        Log.d(TAG, "onDataChange: like update");
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
+//
+//            mDatabase.child("comments").child((String)post.getKey()).addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+////                if (temp2 != null && temp2.getKey().equals(dataSnapshot.getKey()) && !temp2.toString().equalsIgnoreCase(dataSnapshot.toString())) {
+////                    tip("dynamic remind", "Comment update", "Someone commented on your post!", dataSnapshot.getKey());
+////                }
+////                temp2 = dataSnapshot;
+////                    if(dataSnapshot.getValue() != null){
+//////                    Toast.makeText(MainActivity.this, "Comment Update", Toast.LENGTH_SHORT).show();
+////                        Log.d(TAG, "onDataChange: comment update");
+////                    }
+//                    if(dataSnapshot.exists()){
+//                        Log.d(TAG, "onDataChange: comment update");
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
+//
+//
+//        }
+//
+//    }
 
-    public void tip(String tiker, String title, String content, String pid) {
-        /*NotificationManagerCompat mNotifyMgr = NotificationManagerCompat.from(this);
-        Intent intent = new Intent(MainActivity.this, PostActivity.class);
-        intent.putExtra("PID", pid);
-        intent.putExtra("UID", authUid);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,intent, 0);
-        Notification notification = new Notification.Builder(this)
-                .setTicker(tiker)
-                .setContentTitle(title)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentIntent(contentIntent)
-                .setContentText(content).build();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(getPackageName(), TAG, NotificationManager.IMPORTANCE_DEFAULT);
-        }
-        mNotifyMgr.notify(0, notification);*/
-
+    // notification tip
+    public void tip(String tiker, String title, String content) {
         Notification notification = null;
         Intent intent = new Intent(MainActivity.this, MainActivity.class);
-        intent.putExtra("PID", pid);
-        intent.putExtra("UID", authUid);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -396,37 +434,4 @@ public class MainActivity extends AppCompatActivity {
         }
         notificationManager.notify(111123, notification);
     }
-
-    ValueEventListener mValueEventListener1 = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            if (temp1 != null && temp1.getKey().equals(dataSnapshot.getKey()) && !temp1.toString().equalsIgnoreCase(dataSnapshot.toString())) {
-                tip("dynamic remind", "Like update", "Someone liked or unliked your post!", dataSnapshot.getKey());
-            }
-            temp1 = dataSnapshot;
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-    };
-
-    ValueEventListener mValueEventListener2 = new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-            if (temp2 != null && temp2.getKey().equals(dataSnapshot.getKey()) && !temp2.toString().equalsIgnoreCase(dataSnapshot.toString())) {
-                tip("dynamic remind", "Comment update", "Someone commented on your post!", dataSnapshot.getKey());
-            }
-            temp2 = dataSnapshot;
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-    };
-
-
-
 }
