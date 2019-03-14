@@ -45,8 +45,7 @@ public class FilterActivity extends CreatePostActivity {
         originalButton = findViewById(R.id.originalButton);
         submit = findViewById(R.id.filterSubmitButton);
 
-        Bundle extras = getIntent().getExtras();
-        originalImage = (Bitmap) extras.getParcelable("picture");
+        originalImage = ImageUtils.retreiveBitmap(FilterActivity.this);
         imageView.setImageBitmap(originalImage);
 
         blueMessButton.setOnClickListener(new View.OnClickListener() {
@@ -122,11 +121,12 @@ public class FilterActivity extends CreatePostActivity {
             @Override
             public void onClick(View v) {
                 // assume imageview contains latest image
-                Intent returnIntent = new Intent();
-                returnIntent.putExtra("data", filteredImage);
-                setResult(RESULT_OK, returnIntent);
-                finish();
-
+                if(filteredImage != null){
+                    Intent returnIntent = new Intent();
+                    ImageUtils.storeBitmap(FilterActivity.this, filteredImage);
+                    setResult(RESULT_OK, returnIntent);
+                    finish();
+                }
             }
         });
     }

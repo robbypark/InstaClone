@@ -1,6 +1,5 @@
 package com.example.robby.basicfirebaseapp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,9 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 
 
@@ -45,10 +42,6 @@ public class CreatePostActivity extends AppCompatActivity {
     private Button btnSubmit;
     private Button btnCamera;
     private Button filterButton;
-
-
-//    private ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//    private byte[] byteArray;
 
 
     @Override
@@ -93,7 +86,8 @@ public class CreatePostActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(selectedImage != null){
                     Intent intent = new Intent(CreatePostActivity.this, FilterActivity.class);
-                    intent.putExtra("picture", selectedImage);
+//                    intent.putExtra("picture", selectedImage);
+                    ImageUtils.storeBitmap(CreatePostActivity.this, selectedImage);
                     startActivityForResult(intent, RC_FILTER_IMAGE);
                 } else {
                     Toast.makeText(CreatePostActivity.this, "Please add an image first.", Toast.LENGTH_SHORT).show();
@@ -152,12 +146,17 @@ public class CreatePostActivity extends AppCompatActivity {
                 e.printStackTrace();
                 Toast.makeText(CreatePostActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
             }
-        } else if (reqCode == RC_FILTER_IMAGE && resultCode == RESULT_OK || reqCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        } else if (reqCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             // get result of filter
             Bundle extras = data.getExtras();
             Bitmap image = (Bitmap) extras.getParcelable("data");
             // set selectedImage
             selectedImage = image;
+            // set imageView
+            imageView.setImageBitmap(selectedImage);
+        } else if(reqCode == RC_FILTER_IMAGE && resultCode == RESULT_OK){
+            // set selectedImage
+            selectedImage = ImageUtils.retreiveBitmap(CreatePostActivity.this);
             // set imageView
             imageView.setImageBitmap(selectedImage);
         }
