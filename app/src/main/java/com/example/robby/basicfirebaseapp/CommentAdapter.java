@@ -45,6 +45,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
                 for(DataSnapshot child: dataSnapshot.getChildren()){
                     users.put(child.getKey(), child.getValue(User.class));
                 }
+                CommentAdapter.this.notifyDataSetChanged();
             }
 
             @Override
@@ -76,12 +77,14 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
             viewHolder.commentTextView.setText(item.getComment());
             // username
             User user = users.get(item.getUid());
-            viewHolder.nameTextView.setText(user.getUsername());
-            // time
-            long time = item.getTime();
-            SimpleDateFormat sdf = new SimpleDateFormat("MMM dd HH:mm");
-            Date resultdate = new Date(time);
-            viewHolder.timeTextView.setText(sdf.format(resultdate));
+            if(user != null){
+                viewHolder.nameTextView.setText(user.getUsername());
+                // time
+                long time = item.getTime();
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM dd HH:mm");
+                Date resultdate = new Date(time);
+                viewHolder.timeTextView.setText(sdf.format(resultdate));
+            }
         }
 
         return convertView;

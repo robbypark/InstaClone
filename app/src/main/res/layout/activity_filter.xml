@@ -8,10 +8,14 @@
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="291dp"
-        android:layout_height="234dp"
+        android:layout_width="395dp"
+        android:layout_height="250dp"
 
-        android:layout_marginTop="100dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,83 +23,105 @@
 
     <Button
         android:id="@+id/filterSubmitButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/round_rectangle"
         android:text="submit"
+        android:theme="@style/FlatButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/blueMessButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="115dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:background="@drawable/round_rectangle"
         android:text="blue mess"
+        android:theme="@style/FlatButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView1" />
 
     <Button
         android:id="@+id/starlitButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="115dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:background="@drawable/round_rectangle"
         android:text="star lit"
+        android:theme="@style/FlatButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/blueMessButton" />
 
     <Button
         android:id="@+id/awestruckButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="115dp"
+        android:layout_height="30dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:background="@drawable/round_rectangle"
         android:text="awestruck"
+        android:theme="@style/FlatButton"
         app:layout_constraintBaseline_toBaselineOf="@+id/starlitButton"
         app:layout_constraintEnd_toStartOf="@+id/starlitButton" />
 
     <Button
         android:id="@+id/limeStutterButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="115dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:background="@drawable/round_rectangle"
         android:text="lime stutter"
+        android:theme="@style/FlatButton"
         app:layout_constraintBaseline_toBaselineOf="@+id/blueMessButton"
         app:layout_constraintStart_toEndOf="@+id/blueMessButton" />
 
     <Button
         android:id="@+id/nightWhisperButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="115dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
+        android:background="@drawable/round_rectangle"
         android:text="night whisper"
+        android:theme="@style/FlatButton"
         app:layout_constraintBaseline_toBaselineOf="@+id/starlitButton"
         app:layout_constraintStart_toEndOf="@+id/starlitButton" />
 
     <Button
         android:id="@+id/originalButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="115dp"
+        android:layout_height="30dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
+        android:background="@drawable/round_rectangle"
         android:text="original"
+        android:theme="@style/FlatButton"
         app:layout_constraintBaseline_toBaselineOf="@+id/blueMessButton"
         app:layout_constraintEnd_toStartOf="@+id/blueMessButton" />
 

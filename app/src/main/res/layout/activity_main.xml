@@ -6,13 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/mainUserImageView"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/avatar"
         app:border_color="#FF000000"
         app:border_width="2dp"
@@ -21,25 +22,35 @@
 
     <Button
         android:id="@+id/btnFind"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="search"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/search_magnifier_interface_symbol"
+        android:textSize="8sp"
+        android:theme="@style/FlatButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnPost"
+        app:layout_constraintHorizontal_bias="0.48"
         app:layout_constraintStart_toEndOf="@+id/newsFeedButton" />
 
     <TextView
         android:id="@+id/emailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:text="@string/pemail"
-        app:layout_constraintStart_toStartOf="@+id/nameTextView"
+        android:textSize="15dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/mainUserImageView"
         app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
 
     <TextView
@@ -49,50 +60,66 @@
         android:layout_marginStart="80dp"
         android:layout_marginLeft="80dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="65dp"
+        android:layout_marginRight="65dp"
         android:text="@string/pname"
+        android:textColor="@android:color/black"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/mainUserImageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnFollowers"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginBottom="8dp"
         android:text="followers"
+        android:theme="@style/FlatButton"
         app:layout_constraintBottom_toTopOf="@+id/postGridView"
         app:layout_constraintStart_toEndOf="@+id/mainUserImageView" />
 
     <Button
         android:id="@+id/btnFollowing"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:text="@string/pFollowing"
+        android:theme="@style/FlatButton"
         app:layout_constraintBaseline_toBaselineOf="@+id/btnFollowers"
         app:layout_constraintStart_toEndOf="@+id/btnFollowers" />
 
     <Button
         android:id="@+id/btnPost"
-        android:layout_width="wrap_content"
-        android:layout_height="46dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="new post"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginEnd="75dp"
+        android:layout_marginRight="75dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/plus"
+        android:theme="@style/FlatButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/newsFeedButton"
-        android:layout_width="97dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="newsfeed"
+        style="@style/Widget.AppCompat.Button.Borderless.Colored"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginLeft="75dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/home"
+        android:text="@null"
+        android:theme="@style/FlatButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
