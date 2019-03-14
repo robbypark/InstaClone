@@ -378,7 +378,6 @@ public class MainActivity extends AppCompatActivity {
                     .setChannelId("post_work")
                     .setTicker(tiker)
                     .setContentTitle(title)
-                    .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(contentIntent)
                     .setAutoCancel(true)
                     .setContentText(content).build();
@@ -386,7 +385,6 @@ public class MainActivity extends AppCompatActivity {
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                     .setTicker(tiker)
                     .setContentTitle(title)
-                    .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(contentIntent)
                     .setContentText(content)
                     .setAutoCancel(true)

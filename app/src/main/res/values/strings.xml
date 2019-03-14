@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BasicFirebaseApp</string>
+    <string name="app_name">Instaclone</string>
     <string name="pFollowers">Follower</string>
     <string name="pFollowing">Following</string>
     <string name="pname">User Name</string>
